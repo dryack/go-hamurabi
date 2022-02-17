@@ -64,7 +64,7 @@ func orientation() {
 		"\nI will explain the manner in which our population changed, the number of acres of land we hold, the number of " +
 		"cows we have available to help feed our population, and how many people they fed. \nIn addition I will tell you " +
 		"the number of bushels of barley we reaped per acre of planted land. Finally I will inform you of the toll taken" +
-		"on our grain reserves by the rats.")
+		" on our grain reserves by the rats.")
 	enterToCont()
 	fmt.Println("Oh dread lord Hamurabi, I beg you to know our people each require 20 bushels of grain a year or " +
 		"else they will starve. \nThe milk, butter, and cheese provided by our cows will feed 15 people a year for each" +
