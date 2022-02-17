@@ -38,7 +38,7 @@ func feedPeople(state *cityState) {
 	grainRemaining(res, state)
 
 	failMsg = "Think again Hamurabi, you only have " + strconv.Itoa(state.cows) + " cows to slaughter!"
-	res = playerInput("Would you like to slaughter cows to feed 35 people?", 0, state.cows, failMsg)
+	res = playerInput("How many cows would you like to slaughter in order to feed 35 people?", 0, state.cows, failMsg)
 	state.cows -= res
 	state.popFed += 30 * res
 }
