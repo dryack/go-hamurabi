@@ -26,7 +26,13 @@ func printYearResults(state *cityState) {
 	checkForPlague(state)
 	fmt.Printf("Population is now %d.\n", state.population)
 	fmt.Printf("The city owns %d acres of land.\n", state.acres)
-	fmt.Printf("The city keeps %d cows whose produce fed %d people this year.\n", state.cows, state.cows*15)
+	var cowsFed int
+	if state.cows*15 > state.population {
+		cowsFed = state.population
+	} else {
+		cowsFed = state.cows * 15
+	}
+	fmt.Printf("The city keeps %d cows whose produce fed %d people this year.\n", state.cows, cowsFed)
 	fmt.Printf("We have harvested %d bushels per acre.\n", state.bYield)
 	fmt.Printf("Rats ate %d bushels of grain.\n", state.pests)
 	fmt.Printf("We now have %d bushels in store.\n", state.bushels)
