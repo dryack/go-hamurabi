@@ -47,6 +47,7 @@ func doNumbers(state *cityState) {
 
 	state.bYield = rand.Intn(9) + 1
 
+	// starvation & population
 	state.starved = state.population - (state.popFed + state.cows*state.cowMultiplier)
 	if state.starved < 0 {
 		state.starved = 0
@@ -57,6 +58,8 @@ func doNumbers(state *cityState) {
 	checkForOverthrow(state)
 	state.avgStarved = int(float64(state.starved) / float64(state.population) * 100)
 	state.population -= state.starved // children die too
+
+	// migration
 	var cowMigrantAttraction int
 	if state.cows > 3 {
 		cowMigrantAttraction = state.cows * 5
@@ -70,17 +73,22 @@ func doNumbers(state *cityState) {
 		state.migrated = int(0.1*float64(rand.Intn(state.population)+1)) + cowMigrantAttraction
 	}
 	state.population += state.migrated
+
+	// pests
 	granaryProtectMultiplier := 3000
 	unprotectedGrain := state.bushels - state.granary*granaryProtectMultiplier
 	if unprotectedGrain < 0 {
 		unprotectedGrain = 0
 	}
 	state.pests = int(float64(unprotectedGrain) / float64(rand.Intn(4)+3))
+
+	// agricultural results
 	state.bushels += (state.planted - state.cows*3) * state.bYield
 	state.bushels -= state.pests
 	if state.bushels < 0 {
 		state.bushels = 0
 	}
+
 	state.totalDead += state.starved
 	state.avgPestEaten += state.pests
 	state.avgBushelsAvail += state.bushels

@@ -34,7 +34,7 @@ func initCityState(gameTurns int) *cityState {
 		population:    100,
 		starved:       0,
 		migrated:      0,
-		bushels:       8800,
+		bushels:       2800,
 		acres:         1000,
 		bYield:        3,
 		pests:         200,
