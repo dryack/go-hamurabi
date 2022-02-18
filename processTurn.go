@@ -71,7 +71,7 @@ func doNumbers(state *cityState) {
 
 func checkForOverthrow(state *cityState) {
 	if state.starved > int(0.45*float64(state.population)) {
-		fmt.Printf("\nYou starved %d out of your population of only %d, this has cause you to be deposed by force!\n",
+		fmt.Printf("\nYou starved %d out of your population of only %d, this has caused you to be deposed by force!\n",
 			state.starved, state.population)
 		state.totalDead += state.starved
 		endOfReign(state)
