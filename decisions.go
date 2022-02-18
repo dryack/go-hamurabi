@@ -48,7 +48,7 @@ func agriculture(state *cityState) {
 	cowCost := 1000
 	failMsg := "Think again Hamurabi, you only have " + strconv.Itoa(state.bushels) + " bushels available!"
 	maxCows := state.bushels / cowCost
-	res := playerInput("How many cows will you purchase, at "+strconv.Itoa(cowCost)+"bushels per cow?", 0, maxCows, failMsg)
+	res := playerInput("How many cows will you purchase, at "+strconv.Itoa(cowCost)+" bushels per cow?", 0, maxCows, failMsg)
 	state.cows += res
 	state.bushels -= res * cowCost
 	grainRemaining(res, state)

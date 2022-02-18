@@ -6,14 +6,16 @@ import (
 	"os"
 )
 
-func checkForPlague(state *cityState) {
+func checkForPlague(state *cityState) bool {
 	if state.year > 0 && rand.Intn(15) == 0 {
 		fmt.Println("A horrible plague has struck! Many have died!")
 		state.died = state.population / (rand.Intn(4) + 2)
 		state.cows = state.cows / 4
 		state.population -= state.died
 		state.totalDead += state.died
+		return true
 	}
+	return false
 }
 
 func printYearResults(state *cityState) {
@@ -23,7 +25,6 @@ func printYearResults(state *cityState) {
 	state.tradeVal = 17 + rand.Intn(10)
 	fmt.Printf("\nMy lord, in the year %d, I beg to report to you that %d people starved, %d were born, and %d "+
 		"came to the city.\n", state.year, state.starved, state.born, state.migrated)
-	checkForPlague(state)
 	fmt.Printf("Population is now %d.\n", state.population)
 	fmt.Printf("The city owns %d acres of land, and has %d granaries.\n", state.acres, state.granary)
 	var cowsFed int
@@ -36,12 +37,14 @@ func printYearResults(state *cityState) {
 	fmt.Printf("We have harvested %d bushels per acre.\n", state.bYield)
 	fmt.Printf("Rats ate %d bushels of grain.\n", state.pests)
 	fmt.Printf("We now have %d bushels in store.\n", state.bushels)
-	fmt.Printf("We have distributed a total of %d hand plows amongst the people.", state.plows)
+	fmt.Printf("We have distributed a total of %d hand plows amongst the people.\n", state.plows)
 	fmt.Printf("Land is trading at %d bushels per acre.\n", state.tradeVal)
 	state.year += 1
 }
 
 func doNumbers(state *cityState) {
+	plague := checkForPlague(state)
+
 	state.bYield = rand.Intn(9) + 1
 
 	state.starved = state.population - (state.popFed + state.cows*state.cowMultiplier)
@@ -60,7 +63,12 @@ func doNumbers(state *cityState) {
 	} else {
 		cowMigrantAttraction = 0
 	}
-	state.migrated = int(0.1 * float64(rand.Intn(state.population)+1+cowMigrantAttraction))
+	if plague {
+		// people don't come to a place with a plague
+		state.migrated = (int(0.1*float64(rand.Intn(state.population)+1)) + cowMigrantAttraction) / 5
+	} else {
+		state.migrated = int(0.1*float64(rand.Intn(state.population)+1)) + cowMigrantAttraction
+	}
 	state.population += state.migrated
 	granaryProtectMultiplier := 3000
 	unprotectedGrain := state.bushels - state.granary*granaryProtectMultiplier
