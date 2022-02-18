@@ -32,10 +32,11 @@ func printYearResults(state *cityState) {
 	} else {
 		cowsFed = state.cows * state.cowMultiplier
 	}
-	fmt.Printf("The city keeps %d cows whose produce fed %d people this year.\n", state.cows, cowsFed)
+	fmt.Printf("The city keeps %d cows whose product fed %d people this year.\n", state.cows, cowsFed)
 	fmt.Printf("We have harvested %d bushels per acre.\n", state.bYield)
 	fmt.Printf("Rats ate %d bushels of grain.\n", state.pests)
 	fmt.Printf("We now have %d bushels in store.\n", state.bushels)
+	fmt.Printf("We have distributed a total of %d hand plows amongst the people.", state.plows)
 	fmt.Printf("Land is trading at %d bushels per acre.\n", state.tradeVal)
 	state.year += 1
 }
@@ -53,7 +54,13 @@ func doNumbers(state *cityState) {
 	checkForOverthrow(state)
 	state.avgStarved = int(float64(state.starved) / float64(state.population) * 100)
 	state.population -= state.starved // children die too
-	state.migrated = int(0.1 * float64(rand.Intn(state.population)+1))
+	var cowMigrantAttraction int
+	if state.cows > 3 {
+		cowMigrantAttraction = state.cows * 5
+	} else {
+		cowMigrantAttraction = 0
+	}
+	state.migrated = int(0.1 * float64(rand.Intn(state.population)+1+cowMigrantAttraction))
 	state.population += state.migrated
 	granaryProtectMultiplier := 3000
 	unprotectedGrain := state.bushels - state.granary*granaryProtectMultiplier
@@ -83,6 +90,8 @@ func checkForOverthrow(state *cityState) {
 func endOfReign(state *cityState) {
 	fmt.Printf("In your %d year reign %d percent of the population starved per year on average. A total of %d "+
 		"people died during your reign.\n", state.year, state.avgStarved/state.year, state.totalDead)
+	fmt.Printf("The city began with 100 citizens and ended with %d.\n", state.population)
+	fmt.Printf("You ordered the building of %d granaries during your rule.\n", state.granary)
 	fmt.Printf("The city began with 10 acres per person and ended with %d.\n", state.acres/state.population)
 	fmt.Printf("\tAvg Bushels at turn start: %d; Avg Bushels eaten by rats: %d\n", state.avgBushelsAvail/state.turns, state.avgPestEaten/state.turns)
 
