@@ -40,11 +40,12 @@ func feedPeople(state *cityState) {
 	failMsg = "Think again Hamurabi, you only have " + strconv.Itoa(state.cows) + " cows to slaughter!"
 	res = playerInput("How many cows would you like to slaughter in order to feed 35 people?", 0, state.cows, failMsg)
 	state.cows -= res
-	state.popFed += 30 * res
+	cowFeedMultiplier := 30
+	state.popFed += cowFeedMultiplier * res
 }
 
 func agriculture(state *cityState) {
-	cowCost := 300
+	cowCost := 1000
 	failMsg := "Think again Hamurabi, you only have " + strconv.Itoa(state.bushels) + " bushels available!"
 	maxCows := state.bushels / cowCost
 	res := playerInput("How many cows will you purchase, at 300 bushels per cow?", 0, maxCows, failMsg)

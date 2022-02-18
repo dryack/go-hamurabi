@@ -25,12 +25,12 @@ func printYearResults(state *cityState) {
 		"came to the city.\n", state.year, state.starved, state.born, state.migrated)
 	checkForPlague(state)
 	fmt.Printf("Population is now %d.\n", state.population)
-	fmt.Printf("The city owns %d acres of land.\n", state.acres)
+	fmt.Printf("The city owns %d acres of land, and has %d granaries.\n", state.acres, state.granary)
 	var cowsFed int
-	if state.cows*15 > state.population {
+	if state.cows*state.cowMultiplier > state.population {
 		cowsFed = state.population
 	} else {
-		cowsFed = state.cows * 15
+		cowsFed = state.cows * state.cowMultiplier
 	}
 	fmt.Printf("The city keeps %d cows whose produce fed %d people this year.\n", state.cows, cowsFed)
 	fmt.Printf("We have harvested %d bushels per acre.\n", state.bYield)
@@ -42,7 +42,8 @@ func printYearResults(state *cityState) {
 
 func doNumbers(state *cityState) {
 	state.bYield = rand.Intn(9) + 1
-	state.starved = state.population - (state.popFed + state.cows*20)
+
+	state.starved = state.population - (state.popFed + state.cows*state.cowMultiplier)
 	if state.starved < 0 {
 		state.starved = 0
 	}
@@ -54,7 +55,8 @@ func doNumbers(state *cityState) {
 	state.population -= state.starved // children die too
 	state.migrated = int(0.1 * float64(rand.Intn(state.population)+1))
 	state.population += state.migrated
-	unprotectedGrain := state.bushels - state.granary*3000
+	granaryProtectMultiplier := 3000
+	unprotectedGrain := state.bushels - state.granary*granaryProtectMultiplier
 	if unprotectedGrain < 0 {
 		unprotectedGrain = 0
 	}
