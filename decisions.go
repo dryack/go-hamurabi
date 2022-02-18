@@ -26,6 +26,8 @@ func getAcres(state *cityState) {
 }
 
 func feedPeople(state *cityState) {
+	cowFeedMultiplier := 30
+
 	var ary = []int{state.bushels, state.population * 20}
 	sort.Ints(ary)
 	reqBushels := ary[0] // accept the lowest between bushels and bushels needed for the population
@@ -40,7 +42,6 @@ func feedPeople(state *cityState) {
 	failMsg = "Think again Hamurabi, you only have " + strconv.Itoa(state.cows) + " cows to slaughter!"
 	res = playerInput("How many cows would you like to slaughter in order to feed 35 people?", 0, state.cows, failMsg)
 	state.cows -= res
-	cowFeedMultiplier := 30
 	state.popFed += cowFeedMultiplier * res
 }
 
@@ -82,6 +83,8 @@ func agriculture(state *cityState) {
 
 func technology(state *cityState) {
 	costGranary := 1000
+	costPlow := 100
+
 	maxGranaries := state.bushels / costGranary
 	failMsg := "Think again Hamurabi, you only have enough to purchase " + strconv.Itoa(maxGranaries) + " granaries!"
 	res := playerInput("Do you wish to order the construction of city granaries for 1000 bushels, each are able "+
@@ -90,7 +93,6 @@ func technology(state *cityState) {
 	state.bushels -= res * costGranary
 	grainRemaining(res, state)
 
-	costPlow := 100
 	maxPlows := state.bushels / costPlow
 	failMsg = "Think again Hamurabi, you only have enough to purchase " + strconv.Itoa(maxPlows) + " plows!"
 	res = playerInput("Do you wish to order the purchase of plows for 100 bushels, these will make it easier "+
