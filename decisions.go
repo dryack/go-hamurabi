@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"sort"
 	"strconv"
 )
@@ -75,6 +76,10 @@ func agriculture(state *cityState) {
 		failMsg = "Think again Hamurabi, you only have " + strconv.Itoa(state.acres) + " acres to plant!"
 	}
 	res = playerInput("How many fields will you plant?", maxPlantable, maxPlantable, failMsg)
+	if ableToPlant > res {
+		state.nonFarmer = state.population - (res-(effectivePlows*15))/10
+	}
+	fmt.Printf("\tNon-farmers: %d\n", state.nonFarmer)
 
 	state.bushels -= res
 	state.planted = res

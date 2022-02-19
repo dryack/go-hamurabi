@@ -35,6 +35,11 @@ func printYearResults(state *cityState) {
 	}
 	fmt.Printf("The city keeps %d cows whose product fed %d people this year.\n", state.cows, cowsFed)
 	fmt.Printf("We have harvested %d bushels per acre.\n", state.bYield)
+	if state.nonFarmer > 0 && state.tradeGoods > 0 {
+		fmt.Printf("Thanks to having %d citizens not required to farm, trade goods and vegatables brought in %d "+
+			"bushels of grain.\n", state.nonFarmer, state.tradeGoods)
+	}
+	fmt.Printf("")
 	fmt.Printf("Rats ate %d bushels of grain.\n", state.pests)
 	fmt.Printf("We now have %d bushels in store.\n", state.bushels)
 	fmt.Printf("We have distributed a total of %d hand plows amongst the people.\n", state.plows)
@@ -91,6 +96,9 @@ func doNumbers(state *cityState) {
 	if state.bushels < 0 {
 		state.bushels = 0
 	}
+
+	state.tradeGoods = state.nonFarmer * (rand.Intn(49) + 1)
+	state.bushels += state.tradeGoods
 
 	state.totalDead += state.starved
 	state.avgPestEaten += state.pests

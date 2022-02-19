@@ -23,6 +23,8 @@ type cityState struct {
 	plows           int
 	cows            int
 	cowMultiplier   int
+	nonFarmer       int
+	tradeGoods      int
 	avgBushelsAvail int
 	avgPestEaten    int
 }
