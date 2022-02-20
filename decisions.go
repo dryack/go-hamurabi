@@ -63,7 +63,7 @@ func agriculture(state *cityState) {
 
 	// fmt.Printf("\tpopReqForPlanting: %d\n", ableToPlant) // DEBUG
 
-	var ary = []int{state.bushels, state.population * ableToPlant, state.acres - (state.cows * 3)}
+	var ary = []int{state.bushels, ableToPlant, state.acres - (state.cows * 3)}
 	sort.Ints(ary)
 	maxPlantable := ary[0]
 

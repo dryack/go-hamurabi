@@ -2,7 +2,6 @@ package main
 
 import (
 	"io"
-	"math"
 	"math/rand"
 	"os"
 	"time"
@@ -12,6 +11,10 @@ var reader io.Reader
 var writer io.Writer
 
 func main() {
+	gameLoop()
+}
+
+func gameLoop() {
 	rand.Seed(time.Now().UnixNano())
 	var gameTurns int
 	var test bool
@@ -20,7 +23,8 @@ func main() {
 		gameTurns = 100
 		test = true
 	} else {
-		gameTurns = playerInput("How many turns would you like to play?", 10, math.MaxInt, "")
+		// gameTurns = playerInput("How many turns would you like to play?", 10, math.MaxInt, "")
+		gameTurns = 10
 		test = false
 	}
 	sumer := initCityState(gameTurns)
@@ -45,5 +49,4 @@ func main() {
 		agriculture(sumer)
 	}
 	endOfReign(sumer)
-
 }

@@ -62,8 +62,9 @@ func doNumbers(state *cityState) {
 	if plague {
 		state.born /= 2 // children die from the plague as well
 	}
-	state.population += state.born
 	checkForOverthrow(state)
+
+	state.population += state.born
 	state.avgStarved = int(float64(state.starved) / float64(state.population) * 100)
 	state.population -= state.starved // children die too
 
