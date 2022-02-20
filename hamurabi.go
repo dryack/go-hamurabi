@@ -1,14 +1,10 @@
 package main
 
 import (
-	"io"
 	"math/rand"
 	"os"
 	"time"
 )
-
-var reader io.Reader
-var writer io.Writer
 
 func main() {
 	gameLoop()
