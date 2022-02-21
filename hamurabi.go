@@ -1,6 +1,7 @@
 package main
 
 import (
+	"math"
 	"math/rand"
 	"os"
 	"time"
@@ -19,8 +20,8 @@ func gameLoop() {
 		gameTurns = 100
 		test = true
 	} else {
-		// gameTurns = playerInput("How many turns would you like to play?", 10, math.MaxInt, "")
-		gameTurns = 10
+		gameTurns = playerInput("How many turns would you like to play?", 10, math.MaxInt, "")
+
 		test = false
 	}
 	sumer := initCityState(gameTurns)
