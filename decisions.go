@@ -66,6 +66,10 @@ func agriculture(state *cityState) {
 	var ary = []int{state.bushels, ableToPlant, state.acres - (state.cows * 3)}
 	sort.Ints(ary)
 	maxPlantable := ary[0]
+	// avoid cows forcing us to negative numbers
+	if maxPlantable < 0 {
+		maxPlantable = 0
+	}
 
 	switch maxPlantable {
 	case state.bushels:

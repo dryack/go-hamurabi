@@ -19,6 +19,8 @@ func checkForPlague(state *cityState) bool {
 }
 
 func printYearResults(state *cityState) {
+	var otherCityStates = []string{"Dūr-Katlimmu", "Aššur", "Uruk", "Akshak", "Ur", "Nippur", "Lagash", "Larak"}
+
 	if state.year > 0 {
 		doNumbers(state)
 	}
@@ -27,6 +29,19 @@ func printYearResults(state *cityState) {
 		"came to the city.\n", state.year, state.starved, state.born, state.migrated)
 	fmt.Printf("Population is now %d.\n", state.population)
 	fmt.Printf("The city owns %d acres of land, and has %d granaries.\n", state.acres, state.granary)
+
+	// we can't support the cows - so they are killed
+	if state.acres < state.cows*3 {
+		slaughtered := 0
+		if state.acres <= 2 {
+			slaughtered = state.cows
+		} else {
+			slaughtered = (state.acres / 3) % state.cows
+		}
+		state.cows -= slaughtered
+		fmt.Printf("As we lacked the land to support them, %d cows were slaughtered!\n", slaughtered)
+	}
+
 	var cowsFed int
 	if state.cows*state.cowMultiplier > state.population {
 		cowsFed = state.population
@@ -34,12 +49,14 @@ func printYearResults(state *cityState) {
 		cowsFed = state.cows * state.cowMultiplier
 	}
 	fmt.Printf("The city keeps %d cows whose product fed %d people this year.\n", state.cows, cowsFed)
+	if state.acres < 1 {
+		fmt.Printf("Traders report that %s harvested %d bushels per acrs.\n", otherCityStates[rand.Intn(len(otherCityStates)-1)], state.bYield)
+	}
 	fmt.Printf("We have harvested %d bushels per acre.\n", state.bYield)
 	if state.nonFarmer > 0 && state.tradeGoods > 0 {
 		fmt.Printf("Thanks to having %d citizens not required to farm, trade goods and vegatables brought in %d "+
 			"bushels of grain.\n", state.nonFarmer, state.tradeGoods)
 	}
-	fmt.Printf("")
 	fmt.Printf("Rats ate %d bushels of grain.\n", state.pests)
 	fmt.Printf("We now have %d bushels in store.\n", state.bushels)
 	fmt.Printf("We have distributed a total of %d hand plows amongst the people.\n", state.plows)
