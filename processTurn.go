@@ -49,7 +49,7 @@ func printYearResults(state *cityState) {
 		cowsFed = state.cows * state.cowMultiplier
 	}
 	fmt.Printf("The city keeps %d cows whose product fed %d people this year.\n", state.cows, cowsFed)
-	if state.acres < 1 {
+	if state.acres < 1 || state.planted == 0 {
 		fmt.Printf("Traders report that %s harvested %d bushels per acrs.\n", otherCityStates[rand.Intn(len(otherCityStates)-1)], state.bYield)
 	}
 	fmt.Printf("We have harvested %d bushels per acre.\n", state.bYield)
