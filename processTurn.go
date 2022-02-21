@@ -8,7 +8,7 @@ import (
 
 func checkForPlague(state *cityState) bool {
 	if state.year > 0 && rand.Intn(15) == 0 {
-		fmt.Println("A horrible plague has struck! Many have died!")
+		fmt.Println("\nA horrible plague has struck! Many have died!")
 		state.died = state.population / (rand.Intn(4) + 2)
 		state.cows = state.cows / 4
 		state.population -= state.died
@@ -35,6 +35,11 @@ func printYearResults(state *cityState) {
 	}
 	fmt.Printf("The city keeps %d cows whose product fed %d people this year.\n", state.cows, cowsFed)
 	fmt.Printf("We have harvested %d bushels per acre.\n", state.bYield)
+	if state.nonFarmer > 0 && state.tradeGoods > 0 {
+		fmt.Printf("Thanks to having %d citizens not required to farm, trade goods and vegatables brought in %d "+
+			"bushels of grain.\n", state.nonFarmer, state.tradeGoods)
+	}
+	fmt.Printf("")
 	fmt.Printf("Rats ate %d bushels of grain.\n", state.pests)
 	fmt.Printf("We now have %d bushels in store.\n", state.bushels)
 	fmt.Printf("We have distributed a total of %d hand plows amongst the people.\n", state.plows)
@@ -54,8 +59,12 @@ func doNumbers(state *cityState) {
 	}
 	state.avgStarved = int(float64(state.starved) / float64(state.population) * 100)
 	state.born = int(float64(state.population) / float64(rand.Intn(8)+2))
-	state.population += state.born
+	if plague {
+		state.born /= 2 // children die from the plague as well
+	}
 	checkForOverthrow(state)
+
+	state.population += state.born
 	state.avgStarved = int(float64(state.starved) / float64(state.population) * 100)
 	state.population -= state.starved // children die too
 
@@ -88,6 +97,9 @@ func doNumbers(state *cityState) {
 	if state.bushels < 0 {
 		state.bushels = 0
 	}
+
+	state.tradeGoods = state.nonFarmer * (rand.Intn(49) + 1)
+	state.bushels += state.tradeGoods
 
 	state.totalDead += state.starved
 	state.avgPestEaten += state.pests

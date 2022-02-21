@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"sort"
 	"strconv"
 )
@@ -26,6 +27,8 @@ func getAcres(state *cityState) {
 }
 
 func feedPeople(state *cityState) {
+	cowFeedMultiplier := 30
+
 	var ary = []int{state.bushels, state.population * 20}
 	sort.Ints(ary)
 	reqBushels := ary[0] // accept the lowest between bushels and bushels needed for the population
@@ -40,7 +43,6 @@ func feedPeople(state *cityState) {
 	failMsg = "Think again Hamurabi, you only have " + strconv.Itoa(state.cows) + " cows to slaughter!"
 	res = playerInput("How many cows would you like to slaughter in order to feed 35 people?", 0, state.cows, failMsg)
 	state.cows -= res
-	cowFeedMultiplier := 30
 	state.popFed += cowFeedMultiplier * res
 }
 
@@ -61,7 +63,7 @@ func agriculture(state *cityState) {
 
 	// fmt.Printf("\tpopReqForPlanting: %d\n", ableToPlant) // DEBUG
 
-	var ary = []int{state.bushels, state.population * ableToPlant, state.acres - (state.cows * 3)}
+	var ary = []int{state.bushels, ableToPlant, state.acres - (state.cows * 3)}
 	sort.Ints(ary)
 	maxPlantable := ary[0]
 
@@ -74,6 +76,10 @@ func agriculture(state *cityState) {
 		failMsg = "Think again Hamurabi, you only have " + strconv.Itoa(state.acres) + " acres to plant!"
 	}
 	res = playerInput("How many fields will you plant?", maxPlantable, maxPlantable, failMsg)
+	if ableToPlant > res {
+		state.nonFarmer = state.population - (res-(effectivePlows*15))/10
+	}
+	fmt.Printf("\tNon-farmers: %d\n", state.nonFarmer)
 
 	state.bushels -= res
 	state.planted = res
@@ -82,6 +88,8 @@ func agriculture(state *cityState) {
 
 func technology(state *cityState) {
 	costGranary := 1000
+	costPlow := 100
+
 	maxGranaries := state.bushels / costGranary
 	failMsg := "Think again Hamurabi, you only have enough to purchase " + strconv.Itoa(maxGranaries) + " granaries!"
 	res := playerInput("Do you wish to order the construction of city granaries for 1000 bushels, each are able "+
@@ -90,7 +98,6 @@ func technology(state *cityState) {
 	state.bushels -= res * costGranary
 	grainRemaining(res, state)
 
-	costPlow := 100
 	maxPlows := state.bushels / costPlow
 	failMsg = "Think again Hamurabi, you only have enough to purchase " + strconv.Itoa(maxPlows) + " plows!"
 	res = playerInput("Do you wish to order the purchase of plows for 100 bushels, these will make it easier "+
