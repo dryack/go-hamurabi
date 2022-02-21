@@ -13,7 +13,7 @@ func getAcres(state *cityState) {
 	res := playerInput("How many acres do you wish to buy?", 0, state.bushels/state.tradeVal, failMsg)
 	if res == 0 {
 		failMsg = "Think again Hamurabi, you only have " + strconv.Itoa(state.acres) + " acres to sell!"
-		res = playerInput("How many acres do you wish to sell?", 0, state.bushels, failMsg) * -1
+		res = playerInput("How many acres do you wish to sell?", 0, state.acres, failMsg) * -1
 		if res == 0 {
 			return
 		}
