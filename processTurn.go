@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"math"
 	"math/rand"
 	"os"
 )
@@ -115,9 +116,31 @@ func doNumbers(state *cityState) {
 		state.bushels = 0
 	}
 
+	// although the peasants don't have to sow, land must be tended or it will become wasted and be reclaimed by nature
+	// some lands are tended by the royal staff, and although they can be sold, they CAN'T go to waste
+	royalLands := 500
+	fieldMaintPerPop := 30
+	maxAcresMaint := state.population * fieldMaintPerPop
+	// we don't lose the royal-held lands to wastage from lack of peasants
+	if state.acres > royalLands {
+		// if there aren't enough peasants to maintain our acreage
+		if maxAcresMaint < state.acres {
+			state.acresWastage = int(math.Abs(float64(maxAcresMaint - (state.acres - royalLands))))
+			fmt.Printf("Due to a lack of peasants to work the land, %d acres have wasted and are lost!", state.acresWastage)
+		} else {
+			state.acresWastage = 0
+		}
+	} else {
+		state.acresWastage = 0
+	}
+	state.acres -= state.acresWastage
+	if state.acres < royalLands {
+		state.acres = royalLands
+		fmt.Println("However your personal retainers protected your personal estate!")
+	}
+
 	state.tradeGoods = state.nonFarmer * (rand.Intn(49) + 1)
 	state.bushels += state.tradeGoods
-
 	state.totalDead += state.starved
 	state.avgPestEaten += state.pests
 	state.avgBushelsAvail += state.bushels
@@ -128,6 +151,13 @@ func checkForOverthrow(state *cityState) {
 		fmt.Printf("\nYou starved %d out of your population of only %d, this has caused you to be deposed by force!\n",
 			state.starved, state.population)
 		state.totalDead += state.starved
+		endOfReign(state)
+	}
+
+	if state.population < 10 {
+		fmt.Printf("\nYour continued mismanagement caused your population to decline to the point that the " +
+			"remaining peasants fled your land\nYou are left ruling an empty city, as your royal guards and staff escape.\n")
+		state.population = 0
 		endOfReign(state)
 	}
 }

@@ -25,6 +25,7 @@ type cityState struct {
 	cowMultiplier   int
 	nonFarmer       int
 	tradeGoods      int
+	acresWastage    int
 	avgBushelsAvail int
 	avgPestEaten    int
 }
