@@ -3,31 +3,33 @@ package main
 import "math/rand"
 
 type cityState struct {
-	turns           int
-	year            int
-	population      int
-	starved         int
-	migrated        int
-	bushels         int
-	acres           int
-	bYield          int
-	pests           int
-	tradeVal        int
-	avgStarved      int
-	totalDead       int
-	popFed          int
-	planted         int
-	died            int
-	born            int
-	granary         int
-	plows           int
-	cows            int
-	cowMultiplier   int
-	nonFarmer       int
-	tradeGoods      int
-	acresWastage    int
-	avgBushelsAvail int
-	avgPestEaten    int
+	turns            int
+	year             int
+	population       int
+	starved          int
+	migrated         int
+	bushels          int
+	acres            int
+	bYield           int
+	pests            int
+	tradeVal         int
+	avgStarved       int
+	totalDead        int
+	popFed           int
+	planted          int
+	died             int
+	born             int
+	granary          int
+	plows            int
+	cows             int
+	cowMultiplier    int
+	nonFarmer        int
+	tradeGoods       int
+	forceSlaughtered int // cows that were forcibly slaughtered due to lack of land
+	cowsFed          int // how many citizens fed by cows
+	acresWastage     int
+	avgBushelsAvail  int
+	avgPestEaten     int
 }
 
 func initCityState(gameTurns int) *cityState {
