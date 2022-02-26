@@ -49,11 +49,11 @@ func checkInput(input string, maxVal int) (int, error) {
 	return choice, nil
 }
 
-func grainRemaining(res int, state *cityState) {
+func (s *gameSession) grainRemaining(res int) {
 	if res == 0 {
 		return
 	}
-	fmt.Printf("You have %d bushels of grain remaining.\n", state.bushels)
+	fmt.Printf("You have %d bushels of grain remaining.\n", s.state.bushels)
 }
 
 func orientation() {
