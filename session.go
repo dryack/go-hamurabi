@@ -12,7 +12,9 @@ type gameSession struct {
 	avgPestEaten    int
 	avgStarved      int
 	totalDead       int
+	totAcresWasted  int
 	otherCityStates []string
+	points          int // score for evaluation
 }
 
 func newGameSession() (*gameSession, bool) {
@@ -36,6 +38,8 @@ func newGameSession() (*gameSession, bool) {
 		avgPestEaten:    0,
 		avgStarved:      0,
 		totalDead:       0,
+		totAcresWasted:  0,
 		otherCityStates: []string{"Dūr-Katlimmu", "Aššur", "Uruk", "Akshak", "Ur", "Nippur", "Lagash", "Larak"},
+		points:          0,
 	}, test
 }

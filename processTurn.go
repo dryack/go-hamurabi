@@ -105,6 +105,7 @@ func (s *gameSession) doAgriculture() {
 		s.state.acresWastage = 0
 	}
 	s.state.acres -= s.state.acresWastage
+	s.totAcresWasted += s.state.acresWastage
 	if s.state.acres < royalLands {
 		s.state.acres = royalLands
 		fmt.Println("However your personal retainers protected your personal estate!")
