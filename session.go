@@ -28,9 +28,14 @@ func newGameSession() (*gameSession, bool) {
 		test = false
 	}
 	state := initCityState()
+
 	return &gameSession{
 		turns:           gameTurns,
 		state:           *state,
+		avgBushelsAvail: 0,
+		avgPestEaten:    0,
+		avgStarved:      0,
+		totalDead:       0,
 		otherCityStates: []string{"Dūr-Katlimmu", "Aššur", "Uruk", "Akshak", "Ur", "Nippur", "Lagash", "Larak"},
 	}, test
 }

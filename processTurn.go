@@ -122,9 +122,15 @@ func (s *gameSession) doPests() {
 
 func (s *gameSession) doMigration(plague bool) {
 	var cowMigrantAttraction int
-	if s.state.cows > 3 {
+	switch {
+	case s.state.cows <= 3:
+		cowMigrantAttraction = 0
+	case s.state.cows > 3 && s.state.population <= 500:
 		cowMigrantAttraction = s.state.cows * 5
-	} else {
+	case s.state.cows > 3 && s.state.population <= 10000:
+		cowMigrantAttraction = s.state.cows * 3
+	case s.state.cows > 3 && s.state.population > 10000:
+	default:
 		cowMigrantAttraction = 0
 	}
 	if plague {
