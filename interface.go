@@ -74,8 +74,11 @@ func orientation() {
 	enterToCont()
 	fmt.Print("Acres may be purchased from land-owning peasants at a price which varies each year. \nOur people may " +
 		"only plant 10 acres of land each, although we have great hopes that our strongest men may come to plant more " +
-		"as we begin to make use of hand plows.\nOur priests tell us that Enki has delivered unto them the plans for " +
-		"a building that will protect our barley from the rats, but warn construction will be expensive.\n")
+		"as we begin to make use of hand plows.\nToo much land untended by peasants is liable to be reclaimed by nature.\n")
+	fmt.Print("Our priests tell us that Enki has delivered unto them the plans for " +
+		"a building that will protect our barley from the rats, but warn construction will be expensive.\nPlows multiply" +
+		"the labor of our adult male peasants, freeing others to trade and craft. This may have significant impact on" +
+		"our income.")
 	enterToCont()
 	fmt.Print("You must know that starvation; whether caused by cruelty, plague, or pest, will eventually" +
 		" lead to the people rising up and deposing you. \nSometimes it is best to let some starve today, in the hope" +
@@ -85,7 +88,7 @@ func orientation() {
 
 func enterToCont() {
 	os := runtime.GOOS
-	fmt.Print("\n<ENTER> to continue\n")
+	fmt.Print("<ENTER> to continue\n")
 	if os == "windows" {
 		_, _ = fmt.Scanf("%s\n", nil)
 	} else {
