@@ -25,6 +25,7 @@ type cityState struct {
 	forceSlaughtered int // cows that were forcibly slaughtered due to lack of land
 	cowsFed          int // how many citizens fed by cows
 	acresWastage     int
+	stelae           int
 }
 
 func initCityState() *cityState {

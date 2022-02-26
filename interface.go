@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	"regexp"
 	"runtime"
 	"strconv"
 )
@@ -93,5 +94,26 @@ func enterToCont() {
 		_, _ = fmt.Scanf("%s\n", nil)
 	} else {
 		_, _ = fmt.Scanf("%s", nil)
+	}
+}
+
+func yn(prompt string) bool {
+	var res string
+	os := runtime.GOOS
+	fmt.Print(prompt, "[y,n]? => ")
+	if os == "windows" {
+		_, _ = fmt.Scanf("%s\n", &res)
+	} else {
+		_, _ = fmt.Scanf("%s", &res)
+	}
+	r, _ := regexp.Compile("([yYnN])")
+	if !r.MatchString(res) {
+		fmt.Println("My lord you are incoherent, I need a yes or no to proceed!")
+		return yn(prompt)
+	}
+	if res == "y" || res == "Y" {
+		return true
+	} else {
+		return false
 	}
 }

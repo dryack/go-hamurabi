@@ -18,6 +18,7 @@ func gameLoop() {
 		for t := 0; t <= sumer.turns; t++ {
 			sumer.printYearResults()
 			sumer.getAcres()
+			sumer.construction()
 			sumer.technology()
 			sumer.feedPeople()
 			sumer.agriculture()
@@ -27,6 +28,7 @@ func gameLoop() {
 	for t := 0; t <= sumer.turns; t++ {
 		sumer.printYearResults()
 		sumer.getAcres()
+		sumer.construction()
 		sumer.technology()
 		sumer.feedPeople()
 		sumer.agriculture()

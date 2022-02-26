@@ -90,22 +90,27 @@ func (s *gameSession) agriculture() {
 }
 
 func (s *gameSession) technology() {
-	costGranary := 1000
 	costPlow := 100
 
-	maxGranaries := s.state.bushels / costGranary
-	failMsg := "Think again Hamurabi, you only have enough to purchase " + strconv.Itoa(maxGranaries) + " granaries!"
-	res := playerInput("Do you wish to order the construction of city granaries for 1000 bushels, each are able "+
-		"to protect a large amount of precious barley?", 0, maxGranaries, failMsg)
-	s.state.granary += res
-	s.state.bushels -= res * costGranary
-	s.grainRemaining(res)
-
 	maxPlows := s.state.bushels / costPlow
-	failMsg = "Think again Hamurabi, you only have enough to purchase " + strconv.Itoa(maxPlows) + " plows!"
-	res = playerInput("Do you wish to order the purchase of plows for 100 bushels, these will make it easier "+
+	failMsg := "Think again Hamurabi, you only have enough to purchase " + strconv.Itoa(maxPlows) + " plows!"
+	res := playerInput("Do you wish to order the purchase of plows for 100 bushels, these will make it easier "+
 		"for your people to plant the fields?", 0, maxPlows, failMsg)
 	s.state.plows += res
 	s.state.bushels -= res * costPlow
 	s.grainRemaining(res)
+}
+
+func (s *gameSession) construction() {
+	costGranary := 1000
+
+	if yn("My lord, do you wish to consider construction projects this year") {
+		maxGranaries := s.state.bushels / costGranary
+		failMsg := "Think again Hamurabi, you only have enough to purchase " + strconv.Itoa(maxGranaries) + " granaries!"
+		res := playerInput("Do you wish to order the construction of city granaries for 1000 bushels, each are able "+
+			"to protect a large amount of precious barley?", 0, maxGranaries, failMsg)
+		s.state.granary += res
+		s.state.bushels -= res * costGranary
+		s.grainRemaining(res)
+	}
 }
