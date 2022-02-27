@@ -59,7 +59,9 @@ func (s *gameSession) printYearResults() {
 	if s.state.forceSlaughtered > 0 {
 		fmt.Printf("%d cows were slaughtered, as we lacked the land to support them!\n", s.state.forceSlaughtered)
 	}
-	fmt.Printf("The city keeps %d cows whose product fed %d people this year.\n", s.state.cows, s.state.cowsFed)
+	if s.state.cows > 0 {
+		fmt.Printf("The city keeps %d cows whose product fed %d people this year.\n", s.state.cows, s.state.cowsFed)
+	}
 
 	if s.state.acres < 1 || s.state.planted == 0 {
 		fmt.Printf("Traders report that %s harvested %d bushels per acre.\n", s.otherCityStates[rand.Intn(len(s.otherCityStates)-1)], s.state.bYield)
