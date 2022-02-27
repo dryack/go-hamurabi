@@ -129,22 +129,21 @@ func (s *gameSession) construction() {
 		var typePalace int
 		if s.state.buildingPalace == -1 { // if we're already building, don't ask to build more
 			switch {
-			case !s.state.palace1 && s.state.bushels >= palaceCost1:
-				typePalace = 1
-				buildCost = palaceCost1
-				prompt := fmt.Sprintf("Lord shall we begin construction on a palace at a cost of %d", palaceCost1)
+			case s.state.palace2 && s.state.bushels >= palaceCost3:
+				typePalace = 3
+				buildCost = palaceCost3
+				prompt := fmt.Sprintf("Lord shall we begin expansion of your palace at a cost of %d", palaceCost3)
 				pres = yn(prompt)
 			case s.state.palace1 && s.state.bushels >= palaceCost2:
 				typePalace = 2
 				buildCost = palaceCost2
 				prompt := fmt.Sprintf("Lord shall we begin expansion of your palace at a cost of %d", palaceCost2)
 				pres = yn(prompt)
-			case s.state.palace2 && s.state.bushels >= palaceCost3:
-				typePalace = 3
-				buildCost = palaceCost3
-				prompt := fmt.Sprintf("Lord shall we begin expansion of your palace at a cost of %d", palaceCost3)
+			case !s.state.palace1 && s.state.bushels >= palaceCost1:
+				typePalace = 1
+				buildCost = palaceCost1
+				prompt := fmt.Sprintf("Lord shall we begin construction on a palace at a cost of %d", palaceCost1)
 				pres = yn(prompt)
-			default:
 			}
 			if pres {
 				s.palaceBuilding = typePalace
