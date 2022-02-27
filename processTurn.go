@@ -143,18 +143,18 @@ func (s *gameSession) doAgriculture() {
 		// if there aren't enough peasants to maintain our acreage
 		if maxAcresMaint < s.state.acres {
 			s.state.acresWastage = int(math.Abs(float64(maxAcresMaint - (s.state.acres - royalLands))))
-			fmt.Printf("Due to a lack of peasants to work the land, %d acres have wasted and are lost!\n", s.state.acresWastage)
+			fmt.Printf("\nDue to a lack of peasants to work the land, %d acres have wasted and are lost!\n", s.state.acresWastage)
+			s.state.acres -= s.state.acresWastage
+			s.totAcresWasted += s.state.acresWastage
+			if s.state.acres < royalLands {
+				s.state.acres = royalLands
+				fmt.Println("However your personal retainers protected your personal estate!")
+			}
 		} else {
 			s.state.acresWastage = 0
 		}
 	} else {
 		s.state.acresWastage = 0
-	}
-	s.state.acres -= s.state.acresWastage
-	s.totAcresWasted += s.state.acresWastage
-	if s.state.acres < royalLands {
-		s.state.acres = royalLands
-		fmt.Println("However your personal retainers protected your personal estate!")
 	}
 }
 
