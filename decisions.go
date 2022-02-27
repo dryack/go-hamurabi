@@ -27,7 +27,7 @@ func (s *gameSession) getAcres() {
 }
 
 func (s *gameSession) feedPeople() {
-	cowFeedMultiplier := 30
+	cowFeedMultiplier := 100
 
 	var ary = []int{s.state.bushels, s.state.population * 20}
 	sort.Ints(ary)
@@ -41,7 +41,8 @@ func (s *gameSession) feedPeople() {
 	s.grainRemaining(res)
 
 	failMsg = "Think again Hamurabi, you only have " + strconv.Itoa(s.state.cows) + " cows to slaughter!"
-	res = playerInput("How many cows would you like to slaughter in order to feed 35 people?", 0, s.state.cows, failMsg)
+	slaughterMsg := fmt.Sprintf("How many cows would you like to slaughter in order to feed %d people?", cowFeedMultiplier)
+	res = playerInput(slaughterMsg, 0, s.state.cows, failMsg)
 	s.state.cows -= res
 	s.state.popFed += cowFeedMultiplier * res
 }
