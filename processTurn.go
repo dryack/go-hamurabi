@@ -32,13 +32,14 @@ func (s *gameSession) printYearResults() {
 		fmt.Println("My Lord, your workers have completed work on your palace!")
 	}
 	switch {
-	case s.state.palace1:
-		fmt.Println("You are residing in a large palace, together with your family and closest retainers.")
-	case s.state.palace2:
-		fmt.Println("You are residing in a huge palace, together with your family and many retainers.")
 	case s.state.palace3:
 		fmt.Println("You are residing in a massive bustling palace, together with you family, many retainers, royal merchants, and visiting diplomats.")
+	case s.state.palace2:
+		fmt.Println("You are residing in a huge palace, together with your family and many retainers.")
+	case s.state.palace1:
+		fmt.Println("You are residing in a large palace, together with your family and closest retainers.")
 	}
+
 	if s.state.buildingPalace > -1 {
 		switch {
 		case plague:
