@@ -70,7 +70,7 @@ func enterToCont() {
 func yn(prompt string) bool {
 	var res string
 	os := runtime.GOOS
-	fmt.Print(prompt, "(y,n)? => ")
+	fmt.Print(prompt, " (y,n)? => ")
 	if os == "windows" {
 		_, _ = fmt.Scanf("%s\n", &res)
 	} else {

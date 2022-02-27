@@ -15,6 +15,7 @@ type gameSession struct {
 	totAcresWasted  int
 	otherCityStates []string
 	points          int // score for evaluation
+	palaceBuilding  int // what type of palace is under construction
 }
 
 func newGameSession() (*gameSession, bool) {

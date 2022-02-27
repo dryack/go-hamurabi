@@ -19,13 +19,39 @@ func (s *gameSession) checkForPlague() bool {
 }
 
 func (s *gameSession) printYearResults() {
+	var plague bool
+	var palaceComplete bool
 	if s.state.year > 0 {
-		s.doNumbers()
+		plague, palaceComplete = s.doNumbers()
 	}
 	fmt.Printf("\nMy lord, in the year %d, I beg to report to you that %d people starved, %d were born, and %d "+
 		"came to the city.\n", s.state.year, s.state.starved, s.state.born, s.state.migrated)
 	fmt.Printf("Population is now %d.\n", s.state.population)
 	fmt.Printf("The city owns %d acres of land, and has %d granaries.\n", s.state.acres, s.state.granary)
+	if palaceComplete {
+		fmt.Println("My Lord, your workers have completed work on your palace!")
+	}
+	switch {
+	case s.state.palace1:
+		fmt.Println("You are residing in a large palace, together with your family and closest retainers.")
+	case s.state.palace2:
+		fmt.Println("You are residing in a huge palace, together with your family and many retainers.")
+	case s.state.palace3:
+		fmt.Println("You are residing in a massive bustling palace, together with you family, many retainers, royal merchants, and visiting diplomats.")
+	}
+	if s.state.buildingPalace > -1 {
+		switch {
+		case plague:
+			fmt.Println("My Dread Lord, I regret that due to the plague, no work was done on your palace!")
+			fallthrough
+		case !s.state.palace1:
+			fmt.Printf("Construction on your palace is underway, and will be completed in %d years.\n", 5-s.state.buildingPalace)
+		case s.state.palace1:
+			fmt.Printf("Expansion of your palace is underway, and will be completed in %d years.\n", 5-s.state.buildingPalace)
+		case s.state.palace2:
+			fmt.Printf("Expansion of your palace is underway, and will be completed in %d years.\n", 5-s.state.buildingPalace)
+		}
+	}
 
 	// we can't support the cows - so they are killed
 	if s.state.forceSlaughtered > 0 {
@@ -51,8 +77,26 @@ func (s *gameSession) printYearResults() {
 	s.state.year += 1
 }
 
-func (s *gameSession) doNumbers() {
+func (s *gameSession) doNumbers() (bool, bool) {
 	plague := s.checkForPlague()
+	var palaceComplete bool
+
+	if !plague && s.state.buildingPalace > -1 {
+		s.state.buildingPalace++
+	}
+	if s.state.buildingPalace > 4 {
+		switch s.palaceBuilding {
+		case 1:
+			s.state.palace1 = true
+		case 2:
+			s.state.palace2 = true
+		case 3:
+			s.state.palace3 = true
+		}
+		palaceComplete = true
+		s.state.buildingPalace = -1
+		s.palaceBuilding = -1
+	}
 
 	s.state.tradeVal = 17 + rand.Intn(10)
 	s.state.bYield = rand.Intn(9) + 1
@@ -77,6 +121,7 @@ func (s *gameSession) doNumbers() {
 	s.totalDead += s.state.starved
 	s.avgPestEaten += s.state.pests
 	s.avgBushelsAvail += s.state.bushels
+	return plague, palaceComplete
 }
 
 func (s *gameSession) doAgriculture() {
