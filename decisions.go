@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"sort"
 	"strconv"
 )
@@ -102,13 +103,16 @@ func (s *gameSession) technology() {
 }
 
 func (s *gameSession) construction() {
-	costGranary := 1000
+	baseCostGranary := 500
+	costGranary := (s.state.granary + 1) * baseCostGranary
 
 	if yn("My lord, do you wish to consider construction projects this year") {
 		maxGranaries := s.state.bushels / costGranary
 		failMsg := "Think again Hamurabi, you only have enough to purchase " + strconv.Itoa(maxGranaries) + " granaries!"
-		res := playerInput("Do you wish to order the construction of city granaries for 1000 bushels, each are able "+
-			"to protect a large amount of precious barley?", 0, maxGranaries, failMsg)
+
+		inputString := fmt.Sprintf("Do you wish to order the construction of city granaries for %d bushels, each "+
+			"are able to protect a large amount of precious barley?", costGranary)
+		res := playerInput(inputString, 0, maxGranaries, failMsg)
 		s.state.granary += res
 		s.state.bushels -= res * costGranary
 		s.grainRemaining(res)
