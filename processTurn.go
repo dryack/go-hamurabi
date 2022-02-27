@@ -31,6 +31,7 @@ func (s *gameSession) printYearResults() {
 	if palaceComplete {
 		fmt.Println("My Lord, your workers have completed work on your palace!")
 	}
+
 	switch {
 	case s.state.palace3:
 		fmt.Println("You are residing in a massive bustling palace, together with you family, many retainers, royal merchants, and visiting diplomats.")
