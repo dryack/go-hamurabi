@@ -120,7 +120,13 @@ func (s *gameSession) doNumbers() (bool, bool) {
 	// agricultural results
 	s.doAgriculture()
 
-	s.state.tradeGoods = s.state.nonFarmer * (rand.Intn(49) + 1)
+	// trade is reduced during plague
+	if plague {
+		s.state.tradeGoods = s.state.nonFarmer * (rand.Intn(15) + 1)
+	} else {
+		s.state.tradeGoods = s.state.nonFarmer * (rand.Intn(49) + 1)
+	}
+
 	s.state.bushels += s.state.tradeGoods
 	s.totalDead += s.state.starved
 	s.avgPestEaten += s.state.pests
