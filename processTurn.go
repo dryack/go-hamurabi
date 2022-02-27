@@ -57,7 +57,7 @@ func (s *gameSession) printYearResults() {
 
 	// we can't support the cows - so they are killed
 	if s.state.forceSlaughtered > 0 {
-		fmt.Printf("As we lacked the land to support them, %d cows were slaughtered!\n", s.state.forceSlaughtered)
+		fmt.Printf("%d cows were slaughtered, as we lacked the land to support them!\n", s.state.forceSlaughtered)
 	}
 	fmt.Printf("The city keeps %d cows whose product fed %d people this year.\n", s.state.cows, s.state.cowsFed)
 
