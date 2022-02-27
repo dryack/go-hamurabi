@@ -107,7 +107,7 @@ func (s *gameSession) doNumbers() (bool, bool) {
 	// cows
 	s.doCows()
 	// starvation & population
-	s.doStarvation(plague)
+	s.doPopulation(plague)
 	s.checkForOverthrow()
 
 	s.state.population += s.state.born
@@ -191,13 +191,37 @@ func (s *gameSession) doMigration(plague bool) {
 	s.state.population += s.state.migrated
 }
 
-func (s *gameSession) doStarvation(plague bool) {
+func (s *gameSession) doPopulation(plague bool) {
+	carryingCapacity := 100000
 	s.state.starved = s.state.population - (s.state.popFed + s.state.cows*s.state.cowMultiplier)
 	if s.state.starved < 0 {
 		s.state.starved = 0
 	}
 	s.avgStarved = int(float64(s.state.starved) / float64(s.state.population) * 100)
-	s.state.born = int(float64(s.state.population) / float64(rand.Intn(8)+2))
+	switch {
+	case s.state.population < 2000:
+		s.state.born = int(float64(s.state.population) / float64(rand.Intn(8)+2))
+	case s.state.population < carryingCapacity/20:
+		s.state.born = int(float64(s.state.population) / float64(rand.Intn(7)+4))
+	case s.state.population < carryingCapacity/10:
+		s.state.born = int(float64(s.state.population) / float64(rand.Intn(6)+5))
+	case s.state.population < carryingCapacity/5:
+		s.state.born = int(float64(s.state.population) / float64(rand.Intn(6)+6))
+	case s.state.population < carryingCapacity/2:
+		s.state.born = int(float64(s.state.population) / float64(rand.Intn(5)+7))
+	case s.state.population < carryingCapacity-carryingCapacity/3:
+		s.state.born = int(float64(s.state.population) / float64(rand.Intn(5)+8))
+	case s.state.population < carryingCapacity-carryingCapacity/5:
+		s.state.born = int(float64(s.state.population) / float64(rand.Intn(4)+9))
+	case s.state.population < carryingCapacity-carryingCapacity/10:
+		s.state.born = int(float64(s.state.population) / float64(rand.Intn(4)+10))
+	case s.state.population < carryingCapacity-carryingCapacity/20:
+		s.state.born = int(float64(s.state.population) / float64(rand.Intn(3)+11))
+	case s.state.population < carryingCapacity:
+		s.state.born = int(float64(s.state.population) / float64(rand.Intn(2)+12))
+	case s.state.population > carryingCapacity:
+		s.state.born = int(float64(s.state.population) / float64(rand.Intn(2)+14))
+	}
 	if plague {
 		s.state.born /= 2 // children die from the plague as well
 	}
