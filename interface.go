@@ -3,9 +3,12 @@ package main
 import (
 	"errors"
 	"fmt"
+	"github.com/mattn/go-tty"
+	"github.com/muesli/termenv"
 	"regexp"
 	"runtime"
 	"strconv"
+	"strings"
 )
 
 func playerInput(prompt string, defChoice int, maxVal int, failMsg string) int {
@@ -57,13 +60,27 @@ func (s *gameSession) grainRemaining(res int) {
 	fmt.Printf("You have %d bushels of grain remaining.\n", s.state.bushels)
 }
 
-func enterToCont() {
-	os := runtime.GOOS
-	fmt.Print("<ENTER> to continue\n")
-	if os == "windows" {
-		_, _ = fmt.Scanf("%s\n", nil)
-	} else {
-		_, _ = fmt.Scanf("%s", nil)
+func enterToCont() bool {
+	fmt.Print("<ENTER> to continue, <Q> to quit")
+	t, err := tty.Open()
+	if err != nil {
+		fmt.Println(err)
+	}
+	defer t.Close()
+
+	for {
+		r, err := t.ReadRune()
+		if err != nil {
+			fmt.Println(err)
+		}
+		switch {
+		case r == '\r' || r == '\n':
+			termenv.ClearScreen()
+			return false
+		case r == 'Q' || r == 'q':
+			termenv.ClearScreen()
+			return true
+		}
 	}
 }
 
@@ -86,4 +103,16 @@ func yn(prompt string) bool {
 	} else {
 		return false
 	}
+}
+
+//
+func (s *gameSession) fOut(str string, clr string, nums ...int) string {
+	ansiFmtStr := make([]string, 0)
+	for _, n := range nums {
+		ansiFmtStr = append(ansiFmtStr, termenv.String(strconv.Itoa(n)).Bold().Foreground(s.p.Color(clr)).String())
+	}
+	for _, f := range ansiFmtStr {
+		str = strings.Replace(str, "%d", f, 1)
+	}
+	return str
 }

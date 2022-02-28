@@ -24,8 +24,11 @@ func (s *gameSession) printYearResults() {
 	if s.state.year > 0 {
 		plague, palaceComplete = s.doNumbers()
 	}
-	fmt.Printf("\nMy lord, in the year %d, I beg to report to you that %d people starved, %d were born, and %d "+
-		"came to the city.\n", s.state.year, s.state.starved, s.state.born, s.state.migrated)
+	// msg := fmt.Sprintf("\nMy lord, in the year %s, I beg to report to you that %d people starved, %d were born, and %d "+
+	//	"came to the city.", termenv.String(strconv.Itoa(s.state.year)).Bold().Foreground(s.p.Color("87")).String(), s.state.starved, s.state.born, s.state.migrated)
+	msg := s.fOut("\nMy lord, in the year %d, I beg to report to you that %d people starved, %d were born, and %d "+
+		"came to the city.", "199", s.state.year, s.state.starved, s.state.born, s.state.migrated)
+	fmt.Println(msg)
 	fmt.Printf("Population is now %d.\n", s.state.population)
 	fmt.Printf("The city owns %d acres of land, and has %d granaries.\n", s.state.acres, s.state.granary)
 	if palaceComplete {

@@ -2,7 +2,10 @@ module Hamurabi
 
 go 1.17
 
-require github.com/muesli/termenv v0.11.0
+require (
+	github.com/mattn/go-tty v0.0.4
+	github.com/muesli/termenv v0.11.0
+)
 
 require (
 	github.com/lucasb-eyer/go-colorful v1.2.0 // indirect
