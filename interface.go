@@ -9,9 +9,10 @@ import (
 	"runtime"
 	"strconv"
 	"strings"
+	"time"
 )
 
-func playerInput(prompt string, defChoice int, maxVal int, failMsg string) int {
+func playerInput(prompt string, defChoice int, maxVal int, failMsg string, verb string) int {
 	var res string
 	os := runtime.GOOS
 
@@ -23,6 +24,7 @@ func playerInput(prompt string, defChoice int, maxVal int, failMsg string) int {
 
 	finalPrompt := prompt + " [" + strconv.Itoa(defChoice) + "]" + " => "
 	fmt.Print(finalPrompt)
+
 	if os == "windows" {
 		_, _ = fmt.Scanf("%s\n", &res)
 	} else {
@@ -34,11 +36,22 @@ func playerInput(prompt string, defChoice int, maxVal int, failMsg string) int {
 	choice, err := checkInput(res, maxVal)
 	if errors.Is(err, strconv.ErrSyntax) {
 		fmt.Println("Have you gone mad Hamurabi?! Try again.")
-		return playerInput(prompt, defChoice, maxVal, failMsg)
+		time.Sleep(2 * time.Second)
+		termenv.ClearLines(2)
+		return playerInput(prompt, defChoice, maxVal, failMsg, verb)
 	} else if err != nil {
 		fmt.Println(failMsg)
-		return playerInput(prompt, defChoice, maxVal, failMsg)
+		time.Sleep(2 * time.Second)
+		termenv.ClearLines(2)
+		return playerInput(prompt, defChoice, maxVal, failMsg, verb)
 	}
+
+	defer func(choice int, verb string) {
+		if choice != 0 {
+			p := termenv.EnvColorProfile()
+			fmt.Println(termenv.String("You " + verb + " " + strconv.Itoa(choice)).Bold().Foreground(p.Color("40")))
+		}
+	}(choice, verb)
 	return choice
 }
 
@@ -87,11 +100,14 @@ func enterToCont() bool {
 func yn(prompt string) bool {
 	var res string
 	os := runtime.GOOS
-	fmt.Print(prompt, " (y,n)? => ")
+	fmt.Print(prompt, " (y,n) ? [n] => ")
 	if os == "windows" {
 		_, _ = fmt.Scanf("%s\n", &res)
 	} else {
 		_, _ = fmt.Scanf("%s", &res)
+	}
+	if res == "" {
+		return false
 	}
 	r, _ := regexp.Compile("([yYnN])")
 	if !r.MatchString(res) {

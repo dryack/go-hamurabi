@@ -10,10 +10,10 @@ func (s *gameSession) getAcres() {
 	bushelChange := 0
 	failMsg := "Think again Hamurabi, you only have " + strconv.Itoa(s.state.bushels) + " to use for purchase!"
 
-	res := playerInput("How many acres do you wish to buy?", 0, s.state.bushels/s.state.tradeVal, failMsg)
+	res := playerInput("How many acres do you wish to buy?", 0, s.state.bushels/s.state.tradeVal, failMsg, "bought")
 	if res == 0 {
 		failMsg = "Think again Hamurabi, you only have " + strconv.Itoa(s.state.acres) + " acres to sell!"
-		res = playerInput("How many acres do you wish to sell?", 0, s.state.acres, failMsg) * -1
+		res = playerInput("How many acres do you wish to sell?", 0, s.state.acres, failMsg, "sold") * -1
 		if res == 0 {
 			return
 		}
@@ -35,14 +35,14 @@ func (s *gameSession) feedPeople() {
 
 	failMsg := "Think again Hamurabi, you only have " + strconv.Itoa(s.state.bushels) + " available!"
 
-	res := playerInput("How many bushels do you wish to release to your people?", reqBushels, s.state.bushels, failMsg)
+	res := playerInput("How many bushels do you wish to release to your people?", reqBushels, s.state.bushels, failMsg, "released")
 	s.state.bushels -= res
 	s.state.popFed = int(float64(res / 20))
 	s.grainRemaining(res)
 
 	failMsg = "Think again Hamurabi, you only have " + strconv.Itoa(s.state.cows) + " cows to slaughter!"
 	slaughterMsg := fmt.Sprintf("How many cows would you like to slaughter in order to feed %d people?", cowFeedMultiplier)
-	res = playerInput(slaughterMsg, 0, s.state.cows, failMsg)
+	res = playerInput(slaughterMsg, 0, s.state.cows, failMsg, "slaughtered")
 	s.state.cows -= res
 	s.state.popFed += cowFeedMultiplier * res
 }
@@ -51,7 +51,7 @@ func (s *gameSession) agriculture() {
 	cowCost := 1000
 	failMsg := "Think again Hamurabi, you only have " + strconv.Itoa(s.state.bushels) + " bushels available!"
 	maxCows := s.state.bushels / cowCost
-	res := playerInput("How many cows will you purchase, at "+strconv.Itoa(cowCost)+" bushels per cow?", 0, maxCows, failMsg)
+	res := playerInput("How many cows will you purchase, at "+strconv.Itoa(cowCost)+" bushels per cow?", 0, maxCows, failMsg, "purchased")
 	s.state.cows += res
 	s.state.bushels -= res * cowCost
 	s.grainRemaining(res)
@@ -80,7 +80,7 @@ func (s *gameSession) agriculture() {
 	case s.state.acres:
 		failMsg = "Think again Hamurabi, you only have " + strconv.Itoa(s.state.acres) + " acres to plant!"
 	}
-	res = playerInput("How many fields will you plant?", maxPlantable, maxPlantable, failMsg)
+	res = playerInput("How many fields will you plant?", maxPlantable, maxPlantable, failMsg, "planted")
 	if ableToPlant > res {
 		s.state.nonFarmer = s.state.population - (res-(effectivePlows*15))/10
 	}
@@ -97,7 +97,7 @@ func (s *gameSession) technology() {
 	maxPlows := s.state.bushels / costPlow
 	failMsg := "Think again Hamurabi, you only have enough to purchase " + strconv.Itoa(maxPlows) + " plows!"
 	res := playerInput("Do you wish to order the purchase of plows for 100 bushels, these will make it easier "+
-		"for your people to plant the fields?", 0, maxPlows, failMsg)
+		"for your people to plant the fields?", 0, maxPlows, failMsg, "purchased")
 	s.state.plows += res
 	s.state.bushels -= res * costPlow
 	s.grainRemaining(res)
@@ -118,7 +118,7 @@ func (s *gameSession) construction() {
 
 		inputString := fmt.Sprintf("Do you wish to order the construction of city granaries for %d bushels, each "+
 			"are able to protect a large amount of precious barley?", costGranary)
-		res := playerInput(inputString, 0, maxGranaries, failMsg)
+		res := playerInput(inputString, 0, maxGranaries, failMsg, "built")
 		s.state.granary += res
 		s.state.bushels -= res * costGranary
 		s.grainRemaining(res)

@@ -28,8 +28,7 @@ func newGameSession() (*gameSession, bool) {
 		gameTurns = 100
 		test = true
 	} else {
-		gameTurns = playerInput("How many turns would you like to play?", 10, math.MaxInt, "")
-
+		gameTurns = playerInput("How many turns would you like to play?", 10, math.MaxInt, "", "chose")
 		test = false
 	}
 	state := initCityState()
