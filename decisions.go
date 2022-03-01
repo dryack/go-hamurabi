@@ -134,7 +134,7 @@ func (s *gameSession) construction() {
 				buildCost = palaceCost3
 				prompt := fmt.Sprintf("Lord shall we begin expansion of your palace at a cost of %d", palaceCost3)
 				pres = yn(prompt)
-			case s.state.palace1 && s.state.bushels >= palaceCost2:
+			case s.state.palace1 && s.state.bushels >= palaceCost2 && !s.state.palace2:
 				typePalace = 2
 				buildCost = palaceCost2
 				prompt := fmt.Sprintf("Lord shall we begin expansion of your palace at a cost of %d", palaceCost2)
