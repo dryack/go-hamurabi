@@ -27,7 +27,7 @@ func (s *gameSession) getAcres() {
 }
 
 func (s *gameSession) feedPeople() {
-	cowFeedMultiplier := 100
+	cowFeedMultiplier := 45
 
 	var ary = []int{s.state.bushels, s.state.population * 20}
 	sort.Ints(ary)
