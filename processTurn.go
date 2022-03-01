@@ -97,6 +97,7 @@ func (s *gameSession) printYearResults() {
 func (s *gameSession) doNumbers() (bool, bool) {
 	plague := s.checkForPlague()
 	var palaceComplete bool
+	s.state.forceSlaughtered = 0 // reset this each turn
 
 	if !plague && s.state.buildingPalace > -1 {
 		s.state.buildingPalace++
