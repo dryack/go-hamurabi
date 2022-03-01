@@ -19,6 +19,62 @@ func (s *gameSession) checkForPlague() bool {
 	return false
 }
 
+func pickone (a []string) string {
+    idx := rand.Intn(len(a)-1)
+    return a[idx]
+}
+
+func getPalaceDescription() string {
+    adj := []string{
+            "low",
+            "tall",
+            "simple",
+            "ornate",
+            "steep",
+            "gleaming",
+            "sacred",
+            "grand",
+            }
+    artstyle := []string{
+            "bas reliefs",
+            "frescoes",
+            "inscriptions",
+            "mosaics",
+             }
+    material := []string{
+            "carefully wrought",
+            "hastily crafted",
+            "terracotta",
+            "cedar",
+            "diorite",
+            "lapis lazuli",
+            "tiled",
+            "enameled",
+            }
+    location := []string{
+            "garden",
+            "chamber",
+            "courtyard",
+            "terrace",
+            "ziggurat",
+            "throne room",
+            "wall",
+            "hallway",
+            }
+    topic := []string{ 
+            "Enlil separating heaven from earth",
+            "Enki creating humanity",
+            "Ereshkigal feeding dry dust to the mortal spirits in Kur",
+            "Inanna descending into the Underworld",
+            "the jasper dome of heaven which holds the stars",
+            "the Igigi living in the middle dome of heaven",
+            "Utu punishing the wicked",
+            "Nammu giving birth to An and Ki",
+            }
+    return fmt.Sprintf("My Lord, your workers have completed a %s %s with %s %s depicting %s.\n", pickone(adj), pickone(location), pickone(material), pickone(artstyle), pickone(topic))
+
+
+}
 func (s *gameSession) printYearResults() {
 	var plague bool
 	var palaceComplete bool
@@ -33,7 +89,7 @@ func (s *gameSession) printYearResults() {
 	msg = s.fOut("The city owns %d acres of land, and has %d granaries.\n", "199", s.state.acres, s.state.granary)
 	fmt.Print(msg)
 	if palaceComplete {
-		fmt.Println(termenv.String("My Lord, your workers have completed work on your palace!").Bold().Foreground(s.p.Color("226")))
+		fmt.Println(termenv.String(getPalaceDescription()).Bold().Foreground(s.p.Color("226")))
 	}
 
 	switch {
