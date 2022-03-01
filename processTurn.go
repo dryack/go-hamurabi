@@ -38,11 +38,11 @@ func (s *gameSession) printYearResults() {
 
 	switch {
 	case s.state.palace3:
-		fmt.Print(termenv.String("You are residing in a massive bustling palace, together with you family, many retainers, royal merchants, and visiting diplomats.").Background(s.p.Color("214")))
+		fmt.Println(termenv.String("You are residing in a massive bustling palace, together with you family, many retainers, royal merchants, and visiting diplomats.\n").Background(s.p.Color("214")).Foreground(s.p.Color("16")))
 	case s.state.palace2:
-		fmt.Print(termenv.String("You are residing in a huge palace, together with your family and many retainers.").Background(s.p.Color("220")))
+		fmt.Println(termenv.String("You are residing in a huge palace, together with your family and many retainers.\n").Background(s.p.Color("220")).Foreground(s.p.Color("16")))
 	case s.state.palace1:
-		fmt.Print(termenv.String("You are residing in a large palace, together with your family and closest retainers.").Background(s.p.Color("226")))
+		fmt.Println(termenv.String("You are residing in a large palace, together with your family and closest retainers.\n").Background(s.p.Color("226")).Foreground(s.p.Color("16")))
 	}
 
 	if s.state.buildingPalace > -1 {

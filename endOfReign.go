@@ -6,7 +6,7 @@ import (
 )
 
 func (s *gameSession) endOfReign() {
-	fmt.Printf("In your %d year reign %d percent of the population starved per year on average. A total of %d "+
+	fmt.Printf("\nIn your %d year reign %d percent of the population starved per year on average. A total of %d "+
 		"people died during your reign.\n", s.state.year, s.avgStarved/s.state.year, s.totalDead)
 	fmt.Printf("The city began with 100 citizens and ended with %d.\n", s.state.population)
 	fmt.Printf("You ordered the building of %d granaries during your rule.\n", s.state.granary)
