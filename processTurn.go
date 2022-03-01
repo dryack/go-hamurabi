@@ -19,24 +19,58 @@ func (s *gameSession) checkForPlague() bool {
 	return false
 }
 
-func pickone (a [8]string) string {
-    idx := rand.Intn(8)
+func pickone (a []string) string {
+    idx := rand.Intn(len(a)-1)
     return a[idx]
 }
 
 func getPalaceDescription() string {
-    adj := [8]string{"low", "tall", "simple", "ornate", "steep", "gleaming", "sacred", "grand"}
-    artstyle := [8]string{"bas reliefs","frescoes","inscriptions","mosaics", "bas reliefs", "frescoes", "inscriptions", "mosaics"}
-    material := [8]string{"carefully wrought", "hastily crafted", "terracotta","cedar","diorite","lapis lazuli","tiled","enameled"}
-    location := [8]string{"garden","chamber","courtyard","terrace","ziggurat","throne room", "wall", "hallway"}
-    topic := [8]string{ "Enlil separating heaven from earth",
-                        "Enki creating humanity",
-                        "Ereshkigal feeding dry dust to the mortal spirits in Kur",
-                        "Inanna descending into the Underworld",
-                        "the jasper dome of heaven which holds the stars",
-                        "the Igigi living in the middle dome of heaven",
-                        "Utu punishing the wicked",
-                        "Nammu giving birth to An and Ki"}
+    adj := []string{
+            "low",
+            "tall",
+            "simple",
+            "ornate",
+            "steep",
+            "gleaming",
+            "sacred",
+            "grand",
+            }
+    artstyle := []string{
+            "bas reliefs",
+            "frescoes",
+            "inscriptions",
+            "mosaics",
+             }
+    material := []string{
+            "carefully wrought",
+            "hastily crafted",
+            "terracotta",
+            "cedar",
+            "diorite",
+            "lapis lazuli",
+            "tiled",
+            "enameled",
+            }
+    location := []string{
+            "garden",
+            "chamber",
+            "courtyard",
+            "terrace",
+            "ziggurat",
+            "throne room",
+            "wall",
+            "hallway",
+            }
+    topic := []string{ 
+            "Enlil separating heaven from earth",
+            "Enki creating humanity",
+            "Ereshkigal feeding dry dust to the mortal spirits in Kur",
+            "Inanna descending into the Underworld",
+            "the jasper dome of heaven which holds the stars",
+            "the Igigi living in the middle dome of heaven",
+            "Utu punishing the wicked",
+            "Nammu giving birth to An and Ki",
+            }
     return fmt.Sprintf("My Lord, your workers have completed a %s %s with %s %s depicting %s.\n", pickone(adj), pickone(location), pickone(material), pickone(artstyle), pickone(topic))
 
 
