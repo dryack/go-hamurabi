@@ -1,4 +1,4 @@
-module Hamurabi
+module github.com/dryack/go-hamurabi
 
 go 1.17
 
