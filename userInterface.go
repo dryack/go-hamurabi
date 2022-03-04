@@ -132,3 +132,11 @@ func (s *gameSession) fOut(str string, clr string, nums ...int) string {
 	}
 	return str
 }
+
+func (s *gameSession) colorCode(clr string, n int) string {
+	return termenv.String(strconv.Itoa(n)).Bold().Foreground(s.p.Color(clr)).String()
+}
+
+func (s *gameSession) pink(n int) string {
+	return s.colorCode("199", n)
+}

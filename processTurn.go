@@ -25,27 +25,27 @@ func (s *gameSession) checkForPlague() bool {
 
 func (s *gameSession) printYearResults() {
 	const (
-		heading = "\nMy lord, in the year %d, I beg to report to you that %d people starved, %d were born, and %d " +
+		heading = "\nMy lord, in the year %s, I beg to report to you that %s people starved, %s were born, and %s " +
 			"came to the city.\n"
-		newPopulation        = "Population is now %d.\n"
-		acresAndGranaries    = "The city owns %d acres of land, and has %d granaries.\n"
+		newPopulation        = "Population is now %s.\n"
+		acresAndGranaries    = "The city owns %s acres of land, and has %s granaries.\n"
 		palaceCompletion     = "My Lord, your workers have completed work on your palace!"
 		palaceMsg1           = "You are residing in a large palace, together with your family and closest retainers."
 		palaceMsg2           = "You are residing in a huge palace, together with your family and many retainers."
 		palaceMsg3           = "You are residing in a massive bustling palace, together with you family, many retainers, royal merchants, and visiting diplomats."
 		noPalaceWork         = "My Dread Lord, I regret that due to the plague, no work was done on your palace!"
-		buildingPalace       = "Construction on your palace is underway, and will be completed in %d years.\n"
-		expandingPalace      = "Expansion of your palace is underway, and will be completed in %d years.\n"
-		forceSlaughteredCows = "%d cows were slaughtered, as we lacked the land to support them!\n"
-		cowsMsg              = "The city keeps %d cows whose product fed %d people this year.\n"
-		traderReportsYield   = "Traders report that %s harvested %d bushels per acre.\n"
-		harvestYield         = "We have harvested %d bushels per acre.\n"
-		citizenTraders       = "Thanks to having %d citizens not required to farm, trade goods and vegetables brought in %d " +
+		buildingPalace       = "Construction on your palace is underway, and will be completed in %s years.\n"
+		expandingPalace      = "Expansion of your palace is underway, and will be completed in %s years.\n"
+		forceSlaughteredCows = "%s cows were slaughtered, as we lacked the land to support them!\n"
+		cowsMsg              = "The city keeps %s cows whose product fed %s people this year.\n"
+		traderReportsYield   = "Traders report that %s harvested %s bushels per acre.\n"
+		harvestYield         = "We have harvested %s bushels per acre.\n"
+		citizenTraders       = "Thanks to having %s citizens not required to farm, trade goods and vegetables brought in %s " +
 			"bushels of grain.\n"
-		rats          = "Rats ate %d bushels of grain.\n"
-		storedBushels = "We now have %d bushels in store.\n"
-		plows         = "We have distributed a total of %d hand plows amongst the people.\n"
-		landValue     = "Land is trading at %d bushels per acre.\n"
+		rats          = "Rats ate %s bushels of grain.\n"
+		storedBushels = "We now have %s bushels in store.\n"
+		plows         = "We have distributed a total of %s hand plows amongst the people.\n"
+		landValue     = "Land is trading at %s bushels per acre.\n"
 	)
 
 	var plague bool
@@ -53,71 +53,65 @@ func (s *gameSession) printYearResults() {
 	if s.state.year > 0 {
 		plague, palaceComplete = s.doNumbers()
 	}
-	msg := s.fOut(heading, "199", s.state.year, s.state.starved, s.state.born, s.state.migrated)
-	fmt.Print(msg)
 
-	msg = s.fOut(newPopulation, "199", s.state.population)
-	fmt.Print(msg)
-	msg = s.fOut(acresAndGranaries, "199", s.state.acres, s.state.granary)
-	fmt.Print(msg)
+	fmt.Printf(heading, s.pink(s.state.year), s.pink(s.state.starved), s.pink(s.state.born), s.pink(s.state.migrated))
+	fmt.Printf(newPopulation, s.pink(s.state.population))
+	fmt.Printf(acresAndGranaries, s.pink(s.state.acres), s.pink(s.state.granary))
 	if palaceComplete {
+		// TODO: colorCode() or new func to support full string coloration
 		fmt.Println(termenv.String(palaceCompletion).Bold().Foreground(s.p.Color("226")))
 	}
 
 	switch {
 	case s.state.palace3:
+		// TODO: colorCode() or new func to support full string coloration
 		fmt.Println(termenv.String(palaceMsg3).Bold().Background(s.p.Color("214")).Foreground(s.p.Color("16")))
 	case s.state.palace2:
 		fmt.Println(termenv.String(palaceMsg2).Bold().Background(s.p.Color("220")).Foreground(s.p.Color("16")))
 	case s.state.palace1:
+		// TODO: color 226 needs to be double checked
 		fmt.Println(termenv.String(palaceMsg1).Bold().Background(s.p.Color("226")).Foreground(s.p.Color("16")))
 	}
 
 	if s.state.buildingPalace > -1 {
 		switch {
 		case plague:
+			// TODO: colorCode() or new func to support full string coloration
 			fmt.Println(termenv.String(noPalaceWork).Bold().Foreground(s.p.Color("226")))
 			fallthrough
 		case !s.state.palace1:
-			fmt.Printf(buildingPalace, 5-s.state.buildingPalace)
+			fmt.Printf(buildingPalace, s.pink(5-s.state.buildingPalace))
 		case s.state.palace1:
-			fmt.Printf(expandingPalace, 5-s.state.buildingPalace)
+			fmt.Printf(expandingPalace, s.pink(5-s.state.buildingPalace))
 		case s.state.palace2:
-			fmt.Printf(expandingPalace, 5-s.state.buildingPalace)
+			fmt.Printf(expandingPalace, s.pink(5-s.state.buildingPalace))
 		}
 	}
 
 	// we can't support the cows - so they are killed
 	if s.state.forceSlaughtered > 0 {
-		msg = s.fOut(forceSlaughteredCows, "196", s.state.forceSlaughtered)
-		fmt.Print(msg)
+		fmt.Printf(forceSlaughteredCows, s.colorCode("196", s.state.forceSlaughtered))
 	}
 	if s.state.cows > 0 {
-		msg = s.fOut(cowsMsg, "199", s.state.cows, s.state.cowsFed)
-		fmt.Print(msg)
+		fmt.Printf(cowsMsg, s.pink(s.state.cows), s.pink(s.state.cowsFed))
 	}
 
 	if s.state.acres < 1 || s.state.planted == 0 {
-		msg = fmt.Sprintf(s.fOut(traderReportsYield, "199", s.state.bYield), s.otherCityStates[rand.Intn(len(s.otherCityStates)-1)])
-		fmt.Print(msg)
+		neighboringCity := s.otherCityStates[rand.Intn(len(s.otherCityStates)-1)]
+		fmt.Printf(traderReportsYield, s.pink(s.state.bYield), neighboringCity)
 	} else {
-		msg = fmt.Sprintf(s.fOut(harvestYield, "199", s.state.bYield))
-		fmt.Printf(msg)
+		fmt.Printf(harvestYield, s.pink(s.state.bYield))
 	}
 
 	if s.state.nonFarmer > 0 && s.state.tradeGoods > 0 {
-		msg = fmt.Sprintf(s.fOut(citizenTraders, "199", s.state.nonFarmer, s.state.tradeGoods))
-		fmt.Print(msg)
+		fmt.Printf(citizenTraders, s.pink(s.state.nonFarmer), s.pink(s.state.tradeGoods))
 	}
 
-	msg = fmt.Sprintf(s.fOut(rats, "199", s.state.pests))
-	fmt.Print(msg)
-	msg = fmt.Sprintf(s.fOut(storedBushels, "199", s.state.bushels))
-	fmt.Print(msg)
-	msg = fmt.Sprintf(s.fOut(plows, "199", s.state.plows))
-	fmt.Print(msg)
-	msg = fmt.Sprintf(s.fOut(landValue, "199", s.state.tradeVal))
-	fmt.Print(msg)
+	fmt.Printf(rats, s.pink(s.state.pests))
+	fmt.Printf(storedBushels, s.pink(s.state.bushels))
+	fmt.Printf(plows, s.pink(s.state.plows))
+	fmt.Printf(landValue, s.pink(s.state.tradeVal))
+	// TODO: state change shouldn't happen in messages
 	s.state.year += 1
 }
 
@@ -193,8 +187,7 @@ func (s *gameSession) doAgriculture() {
 		if maxAcresMaint < s.state.acres {
 			s.state.acresWastage = int(math.Abs(float64(maxAcresMaint - (s.state.acres - royalLands))))
 			// TODO: messages shouldn't be happening during state changes
-			msg := fmt.Sprintf(s.fOut("\nDue to a lack of peasants to work the land, %d acres have wasted and are lost!\n", "196", s.state.acresWastage))
-			fmt.Print(msg)
+			fmt.Printf("\nDue to a lack of peasants to work the land, %s acres have wasted and are lost!\n", s.colorCode("1996", s.state.acresWastage))
 			s.state.acres -= s.state.acresWastage
 			s.totAcresWasted += s.state.acresWastage
 			if s.state.acres < royalLands {
@@ -296,19 +289,19 @@ func (s *gameSession) doCows() {
 
 func (s *gameSession) checkForOverthrow() {
 	const (
-		deposedMsg         = "\nYou starved %d out of your population of only %d, this has caused you to be deposed by force!\n"
+		deposedMsg         = "\nYou starved %s out of your population of only %d, this has caused you to be deposed by force!\n"
 		populationDeclined = "\nYour continued mismanagement caused your population to decline to the point that the " +
 			"remaining peasants fled your land\nYou are left ruling an empty city, as your royal guards and staff escape.\n"
 	)
 	if s.state.starved > int(0.45*float64(s.state.population)) {
-		msg := fmt.Sprintf(s.fOut(deposedMsg, "196",
-			s.state.starved, s.state.population))
-		fmt.Print(msg)
+		// TODO: colorCode() or new func to support full string coloration
+		fmt.Printf(deposedMsg, s.colorCode("196", s.state.starved), s.state.population)
 		s.totalDead += s.state.starved
 		s.endOfReign()
 	}
 
 	if s.state.population < 10 {
+		// TODO: colorCode() or new func to support full string coloration
 		fmt.Print(termenv.String(populationDeclined).Bold().Background(s.p.Color("196")))
 		s.state.population = 0
 		s.endOfReign()
