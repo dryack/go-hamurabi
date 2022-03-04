@@ -19,10 +19,12 @@ type gameSession struct {
 	p               termenv.Profile
 }
 
-func newGameSession() *gameSession {
-	var gameTurns int
+func getGameTurns() int {
+	return playerInput("How many turns would you like to play?", 10, math.MaxInt, "", "chose")
+}
 
-	gameTurns = playerInput("How many turns would you like to play?", 10, math.MaxInt, "", "chose")
+func newGameSession() *gameSession {
+	gameTurns := getGameTurns()
 	state := initCityState()
 
 	return &gameSession{
