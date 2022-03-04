@@ -140,3 +140,7 @@ func (s *gameSession) colorCode(clr string, n int) string {
 func (s *gameSession) pink(n int) string {
 	return s.colorCode("199", n)
 }
+
+func (s *gameSession) red(n int) string {
+	return s.colorCode("196", n)
+}

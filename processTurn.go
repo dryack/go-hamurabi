@@ -90,7 +90,7 @@ func (s *gameSession) printYearResults() {
 
 	// we can't support the cows - so they are killed
 	if s.state.forceSlaughtered > 0 {
-		fmt.Printf(forceSlaughteredCows, s.colorCode("196", s.state.forceSlaughtered))
+		fmt.Printf(forceSlaughteredCows, s.red(s.state.forceSlaughtered))
 	}
 	if s.state.cows > 0 {
 		fmt.Printf(cowsMsg, s.pink(s.state.cows), s.pink(s.state.cowsFed))
@@ -295,7 +295,7 @@ func (s *gameSession) checkForOverthrow() {
 	)
 	if s.state.starved > int(0.45*float64(s.state.population)) {
 		// TODO: colorCode() or new func to support full string coloration
-		fmt.Printf(deposedMsg, s.colorCode("196", s.state.starved), s.state.population)
+		fmt.Printf(deposedMsg, s.red(s.state.starved), s.state.population)
 		s.totalDead += s.state.starved
 		s.endOfReign()
 	}
