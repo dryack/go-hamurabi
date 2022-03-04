@@ -2,9 +2,10 @@ package main
 
 import (
 	"fmt"
-	"github.com/muesli/termenv"
 	"math"
 	"math/rand"
+
+	"github.com/muesli/termenv"
 )
 
 func (s *gameSession) checkForPlague() bool {
@@ -19,12 +20,18 @@ func (s *gameSession) checkForPlague() bool {
 	return false
 }
 
+const (
+	intro = "\nMy lord, in the year %s, I beg to report to you that %s people starved, %s were born, and %s came to the city.\n"
+)
+
 func (s *gameSession) printYearResults() {
 	var plague bool
 	var palaceComplete bool
 	if s.state.year > 0 {
 		plague, palaceComplete = s.doNumbers()
 	}
+	fmt.Printf(intro, s.pink(s.state.year), s.pink(s.state.starved), s.pink(s.state.born), s.pink(s.state.migrated))
+
 	msg := s.fOut("\nMy lord, in the year %d, I beg to report to you that %d people starved, %d were born, and %d "+
 		"came to the city.\n", "199", s.state.year, s.state.starved, s.state.born, s.state.migrated)
 	fmt.Print(msg)
