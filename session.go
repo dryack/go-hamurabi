@@ -3,7 +3,6 @@ package main
 import (
 	"github.com/muesli/termenv"
 	"math"
-	"os"
 )
 
 type gameSession struct {
@@ -20,17 +19,10 @@ type gameSession struct {
 	p               termenv.Profile
 }
 
-func newGameSession() (*gameSession, bool) {
+func newGameSession() *gameSession {
 	var gameTurns int
-	var test bool
 
-	if os.Args[0] == "-test" {
-		gameTurns = 100
-		test = true
-	} else {
-		gameTurns = playerInput("How many turns would you like to play?", 10, math.MaxInt, "", "chose")
-		test = false
-	}
+	gameTurns = playerInput("How many turns would you like to play?", 10, math.MaxInt, "", "chose")
 	state := initCityState()
 
 	return &gameSession{
@@ -44,5 +36,5 @@ func newGameSession() (*gameSession, bool) {
 		otherCityStates: []string{"Dūr-Katlimmu", "Aššur", "Uruk", "Akshak", "Ur", "Nippur", "Lagash", "Larak"},
 		points:          0,
 		p:               termenv.EnvColorProfile(),
-	}, test
+	}
 }

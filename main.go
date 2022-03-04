@@ -11,20 +11,9 @@ func main() {
 
 func gameLoop() {
 	rand.Seed(time.Now().UnixNano())
-	sumer, test := newGameSession()
+	sumer := newGameSession()
 
-	if !test {
-		orientation()
-		for t := 0; t <= sumer.turns; t++ {
-			sumer.printYearResults()
-			sumer.getAcres()
-			sumer.construction()
-			sumer.technology()
-			sumer.feedPeople()
-			sumer.agriculture()
-		}
-		sumer.endOfReign()
-	}
+	orientation()
 	for t := 0; t <= sumer.turns; t++ {
 		sumer.printYearResults()
 		sumer.getAcres()
