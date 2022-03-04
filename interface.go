@@ -3,13 +3,14 @@ package main
 import (
 	"errors"
 	"fmt"
-	"github.com/mattn/go-tty"
-	"github.com/muesli/termenv"
 	"regexp"
 	"runtime"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/mattn/go-tty"
+	"github.com/muesli/termenv"
 )
 
 func playerInput(prompt string, defChoice int, maxVal int, failMsg string, verb string) int {
@@ -119,6 +120,14 @@ func yn(prompt string) bool {
 	} else {
 		return false
 	}
+}
+
+func (s *gameSession) colorCode(clr string, n int) string {
+	return termenv.String(strconv.Itoa(n)).Bold().Foreground(s.p.Color(clr)).String()
+}
+
+func (s *gameSession) pink(n int) string {
+	return s.colorCode("199", n)
 }
 
 //
