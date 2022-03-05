@@ -11,11 +11,12 @@ func main() {
 
 func gameLoop() {
 	rand.Seed(time.Now().UnixNano())
+	term := initTerminal()
 	sumer := newGameSession()
 
 	orientation()
 	for t := 0; t <= sumer.turns; t++ {
-		sumer.printYearResults()
+		sumer.printYearResults(term)
 		sumer.getAcres()
 		sumer.construction()
 		sumer.technology()

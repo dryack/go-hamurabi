@@ -1,7 +1,6 @@
 package main
 
 import (
-	"github.com/muesli/termenv"
 	"math"
 )
 
@@ -15,8 +14,7 @@ type gameSession struct {
 	totAcresWasted  int
 	otherCityStates []string
 	points          int // score for evaluation
-	palaceBuilding  int // what type of palace is under construction
-	p               termenv.Profile
+	palaceBuilding  int // t type of palace is under construction
 }
 
 func getGameTurns() int {
@@ -37,6 +35,5 @@ func newGameSession() *gameSession {
 		totAcresWasted:  0,
 		otherCityStates: []string{"Dūr-Katlimmu", "Aššur", "Uruk", "Akshak", "Ur", "Nippur", "Lagash", "Larak"},
 		points:          0,
-		p:               termenv.EnvColorProfile(),
 	}
 }

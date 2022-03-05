@@ -8,9 +8,19 @@ import (
 	"regexp"
 	"runtime"
 	"strconv"
-	"strings"
 	"time"
 )
+
+// anticipating this growing over time
+type terminal struct {
+	p termenv.Profile
+}
+
+func initTerminal() *terminal {
+	return &terminal{
+		p: termenv.EnvColorProfile(),
+	}
+}
 
 func playerInput(prompt string, defChoice int, maxVal int, failMsg string, verb string) int {
 	var res string
@@ -121,26 +131,14 @@ func yn(prompt string) bool {
 	}
 }
 
-//
-func (s *gameSession) fOut(str string, clr string, nums ...int) string {
-	ansiFmtStr := make([]string, 0)
-	for _, n := range nums {
-		ansiFmtStr = append(ansiFmtStr, termenv.String(strconv.Itoa(n)).Bold().Foreground(s.p.Color(clr)).String())
-	}
-	for _, f := range ansiFmtStr {
-		str = strings.Replace(str, "%d", f, 1)
-	}
-	return str
+func (term *terminal) colorCode(clr string, n int) string {
+	return termenv.String(strconv.Itoa(n)).Bold().Foreground(term.p.Color(clr)).String()
 }
 
-func (s *gameSession) colorCode(clr string, n int) string {
-	return termenv.String(strconv.Itoa(n)).Bold().Foreground(s.p.Color(clr)).String()
+func (term *terminal) pink(n int) string {
+	return term.colorCode("199", n)
 }
 
-func (s *gameSession) pink(n int) string {
-	return s.colorCode("199", n)
-}
-
-func (s *gameSession) red(n int) string {
-	return s.colorCode("196", n)
+func (term *terminal) red(n int) string {
+	return term.colorCode("196", n)
 }

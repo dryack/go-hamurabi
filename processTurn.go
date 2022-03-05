@@ -23,7 +23,7 @@ func (s *gameSession) checkForPlague() bool {
 	return false
 }
 
-func (s *gameSession) printYearResults() {
+func (s *gameSession) printYearResults(term *terminal) {
 	const (
 		heading = "\nMy lord, in the year %s, I beg to report to you that %s people starved, %s were born, and %s " +
 			"came to the city.\n"
@@ -51,71 +51,71 @@ func (s *gameSession) printYearResults() {
 	var plague bool
 	var palaceComplete bool
 	if s.state.year > 0 {
-		plague, palaceComplete = s.doNumbers()
+		plague, palaceComplete = s.doNumbers(term)
 	}
 
-	fmt.Printf(heading, s.pink(s.state.year), s.pink(s.state.starved), s.pink(s.state.born), s.pink(s.state.migrated))
-	fmt.Printf(newPopulation, s.pink(s.state.population))
-	fmt.Printf(acresAndGranaries, s.pink(s.state.acres), s.pink(s.state.granary))
+	fmt.Printf(heading, term.pink(s.state.year), term.pink(s.state.starved), term.pink(s.state.born), term.pink(s.state.migrated))
+	fmt.Printf(newPopulation, term.pink(s.state.population))
+	fmt.Printf(acresAndGranaries, term.pink(s.state.acres), term.pink(s.state.granary))
 	if palaceComplete {
 		// TODO: colorCode() or new func to support full string coloration
-		fmt.Println(termenv.String(palaceCompletion).Bold().Foreground(s.p.Color("226")))
+		fmt.Println(termenv.String(palaceCompletion).Bold().Foreground(term.p.Color("226")))
 	}
 
 	switch {
 	case s.state.palace3:
 		// TODO: colorCode() or new func to support full string coloration
-		fmt.Println(termenv.String(palaceMsg3).Bold().Background(s.p.Color("214")).Foreground(s.p.Color("16")))
+		fmt.Println(termenv.String(palaceMsg3).Bold().Background(term.p.Color("214")).Foreground(term.p.Color("16")))
 	case s.state.palace2:
-		fmt.Println(termenv.String(palaceMsg2).Bold().Background(s.p.Color("220")).Foreground(s.p.Color("16")))
+		fmt.Println(termenv.String(palaceMsg2).Bold().Background(term.p.Color("220")).Foreground(term.p.Color("16")))
 	case s.state.palace1:
 		// TODO: color 226 needs to be double checked
-		fmt.Println(termenv.String(palaceMsg1).Bold().Background(s.p.Color("226")).Foreground(s.p.Color("16")))
+		fmt.Println(termenv.String(palaceMsg1).Bold().Background(term.p.Color("226")).Foreground(term.p.Color("16")))
 	}
 
 	if s.state.buildingPalace > -1 {
 		switch {
 		case plague:
 			// TODO: colorCode() or new func to support full string coloration
-			fmt.Println(termenv.String(noPalaceWork).Bold().Foreground(s.p.Color("226")))
+			fmt.Println(termenv.String(noPalaceWork).Bold().Foreground(term.p.Color("226")))
 			fallthrough
 		case !s.state.palace1:
-			fmt.Printf(buildingPalace, s.pink(5-s.state.buildingPalace))
+			fmt.Printf(buildingPalace, term.pink(5-s.state.buildingPalace))
 		case s.state.palace1:
-			fmt.Printf(expandingPalace, s.pink(5-s.state.buildingPalace))
+			fmt.Printf(expandingPalace, term.pink(5-s.state.buildingPalace))
 		case s.state.palace2:
-			fmt.Printf(expandingPalace, s.pink(5-s.state.buildingPalace))
+			fmt.Printf(expandingPalace, term.pink(5-s.state.buildingPalace))
 		}
 	}
 
 	// we can't support the cows - so they are killed
 	if s.state.forceSlaughtered > 0 {
-		fmt.Printf(forceSlaughteredCows, s.red(s.state.forceSlaughtered))
+		fmt.Printf(forceSlaughteredCows, term.red(s.state.forceSlaughtered))
 	}
 	if s.state.cows > 0 {
-		fmt.Printf(cowsMsg, s.pink(s.state.cows), s.pink(s.state.cowsFed))
+		fmt.Printf(cowsMsg, term.pink(s.state.cows), term.pink(s.state.cowsFed))
 	}
 
 	if s.state.acres < 1 || s.state.planted == 0 {
 		neighboringCity := s.otherCityStates[rand.Intn(len(s.otherCityStates)-1)]
-		fmt.Printf(traderReportsYield, s.pink(s.state.bYield), neighboringCity)
+		fmt.Printf(traderReportsYield, term.pink(s.state.bYield), neighboringCity)
 	} else {
-		fmt.Printf(harvestYield, s.pink(s.state.bYield))
+		fmt.Printf(harvestYield, term.pink(s.state.bYield))
 	}
 
 	if s.state.nonFarmer > 0 && s.state.tradeGoods > 0 {
-		fmt.Printf(citizenTraders, s.pink(s.state.nonFarmer), s.pink(s.state.tradeGoods))
+		fmt.Printf(citizenTraders, term.pink(s.state.nonFarmer), term.pink(s.state.tradeGoods))
 	}
 
-	fmt.Printf(rats, s.pink(s.state.pests))
-	fmt.Printf(storedBushels, s.pink(s.state.bushels))
-	fmt.Printf(plows, s.pink(s.state.plows))
-	fmt.Printf(landValue, s.pink(s.state.tradeVal))
+	fmt.Printf(rats, term.pink(s.state.pests))
+	fmt.Printf(storedBushels, term.pink(s.state.bushels))
+	fmt.Printf(plows, term.pink(s.state.plows))
+	fmt.Printf(landValue, term.pink(s.state.tradeVal))
 	// TODO: state change shouldn't happen in messages
 	s.state.year += 1
 }
 
-func (s *gameSession) doNumbers() (bool, bool) {
+func (s *gameSession) doNumbers(term *terminal) (bool, bool) {
 	plague := s.checkForPlague()
 	var palaceComplete bool
 	s.state.forceSlaughtered = 0 // reset this each turn
@@ -143,7 +143,7 @@ func (s *gameSession) doNumbers() (bool, bool) {
 	s.doCows()
 	// starvation & population
 	s.doPopulation(plague)
-	s.checkForOverthrow()
+	s.checkForOverthrow(term)
 
 	s.state.population += s.state.born
 	s.avgStarved = int(float64(s.state.starved) / float64(s.state.population) * 100)
@@ -153,7 +153,7 @@ func (s *gameSession) doNumbers() (bool, bool) {
 	// pests
 	s.doPests()
 	// agricultural results
-	s.doAgriculture()
+	s.doAgriculture(term)
 
 	// trade is reduced during plague
 	if plague {
@@ -169,7 +169,7 @@ func (s *gameSession) doNumbers() (bool, bool) {
 	return plague, palaceComplete
 }
 
-func (s *gameSession) doAgriculture() {
+func (s *gameSession) doAgriculture(term *terminal) {
 	s.state.bushels += (s.state.planted - s.state.cows*3) * s.state.bYield
 	s.state.bushels -= s.state.pests
 	if s.state.bushels < 0 {
@@ -187,7 +187,7 @@ func (s *gameSession) doAgriculture() {
 		if maxAcresMaint < s.state.acres {
 			s.state.acresWastage = int(math.Abs(float64(maxAcresMaint - (s.state.acres - royalLands))))
 			// TODO: messages shouldn't be happening during state changes
-			fmt.Printf("\nDue to a lack of peasants to work the land, %s acres have wasted and are lost!\n", s.colorCode("196", s.state.acresWastage))
+			fmt.Printf("\nDue to a lack of peasants to work the land, %s acres have wasted and are lost!\n", term.colorCode("196", s.state.acresWastage))
 			s.state.acres -= s.state.acresWastage
 			s.totAcresWasted += s.state.acresWastage
 			if s.state.acres < royalLands {
@@ -287,7 +287,7 @@ func (s *gameSession) doCows() {
 	}
 }
 
-func (s *gameSession) checkForOverthrow() {
+func (s *gameSession) checkForOverthrow(term *terminal) {
 	const (
 		deposedMsg         = "\nYou starved %s out of your population of only %d, this has caused you to be deposed by force!\n"
 		populationDeclined = "\nYour continued mismanagement caused your population to decline to the point that the " +
@@ -295,14 +295,14 @@ func (s *gameSession) checkForOverthrow() {
 	)
 	if s.state.starved > int(0.45*float64(s.state.population)) {
 		// TODO: colorCode() or new func to support full string coloration
-		fmt.Printf(deposedMsg, s.red(s.state.starved), s.state.population)
+		fmt.Printf(deposedMsg, term.red(s.state.starved), s.state.population)
 		s.totalDead += s.state.starved
 		s.endOfReign()
 	}
 
 	if s.state.population < 10 {
 		// TODO: colorCode() or new func to support full string coloration
-		fmt.Print(termenv.String(populationDeclined).Bold().Background(s.p.Color("196")))
+		fmt.Print(termenv.String(populationDeclined).Bold().Background(term.p.Color("196")))
 		s.state.population = 0
 		s.endOfReign()
 	}
