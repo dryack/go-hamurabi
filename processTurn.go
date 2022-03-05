@@ -187,7 +187,7 @@ func (s *gameSession) doAgriculture() {
 		if maxAcresMaint < s.state.acres {
 			s.state.acresWastage = int(math.Abs(float64(maxAcresMaint - (s.state.acres - royalLands))))
 			// TODO: messages shouldn't be happening during state changes
-			fmt.Printf("\nDue to a lack of peasants to work the land, %s acres have wasted and are lost!\n", s.colorCode("1996", s.state.acresWastage))
+			fmt.Printf("\nDue to a lack of peasants to work the land, %s acres have wasted and are lost!\n", s.colorCode("196", s.state.acresWastage))
 			s.state.acres -= s.state.acresWastage
 			s.totAcresWasted += s.state.acresWastage
 			if s.state.acres < royalLands {
