@@ -76,11 +76,11 @@ func checkInput(input string, maxVal int) (int, error) {
 	return choice, nil
 }
 
-func (s *gameSession) grainRemaining(res int) {
+func (term *terminal) grainRemaining(bushels int, res int) {
 	if res == 0 {
 		return
 	}
-	fmt.Printf("You have %d bushels of grain remaining.\n", s.state.bushels)
+	fmt.Printf("You have %d bushels of grain remaining.\n", bushels)
 }
 
 func enterToCont() bool {

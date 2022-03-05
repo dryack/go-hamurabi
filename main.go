@@ -17,11 +17,11 @@ func gameLoop() {
 	orientation()
 	for t := 0; t <= sumer.turns; t++ {
 		sumer.printYearResults(term)
-		sumer.getAcres()
-		sumer.construction()
-		sumer.technology()
-		sumer.feedPeople()
-		sumer.agriculture()
+		sumer.getAcres(term)
+		sumer.construction(term)
+		sumer.technology(term)
+		sumer.feedPeople(term)
+		sumer.agriculture(term)
 	}
 	sumer.endOfReign()
 }
