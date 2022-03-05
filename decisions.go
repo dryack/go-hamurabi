@@ -128,7 +128,8 @@ func (s *gameSession) construction(term *terminal) {
 		var buildCost int
 		var typePalace int
 
-		if s.state.buildingPalace == -1 && !s.state.palace3 { // if we're already building, don't ask to build more
+		// if we're already building, or our palace is maxed out, don't ask to build more
+		if s.state.buildingPalace == -1 && !s.state.palace3 {
 			switch {
 			case s.state.palace2 && s.state.bushels >= palaceCost3:
 				typePalace = 3
