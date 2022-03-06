@@ -127,10 +127,14 @@ func (s *gameSession) doNumbers(term *terminal) (bool, bool) {
 		switch s.palaceBuilding {
 		case 1:
 			s.state.structures.palace1 = true
+			s.state.technology.silver = true
+			s.state.technology.orchard = true
 		case 2:
 			s.state.structures.palace2 = true
+			s.state.technology.stela = true
 		case 3:
 			s.state.structures.palace3 = true
+			s.state.technology.ziggurat = true
 		}
 		palaceComplete = true
 		s.state.buildingPalace = -1
@@ -293,7 +297,19 @@ func (s *gameSession) checkForOverthrow(term *terminal) {
 		populationDeclined = "\nYour continued mismanagement caused your population to decline to the point that the " +
 			"remaining peasants fled your land\nYou are left ruling an empty city, as your royal guards and staff escape.\n"
 	)
-	if s.state.starved > int(0.45*float64(s.state.resources.population)) {
+	var stability float64 = 0.45
+	switch {
+	case s.state.structures.palace1:
+		stability += .01
+		fallthrough
+	case s.state.structures.palace2:
+		stability += .02
+		fallthrough
+	case s.state.structures.palace3:
+		stability += .03
+	}
+
+	if s.state.starved > int(stability*float64(s.state.resources.population)) {
 		// TODO: colorCode() or new func to support full string coloration
 		fmt.Printf(deposedMsg, term.red(s.state.starved), s.state.resources.population)
 		s.totalDead += s.state.starved

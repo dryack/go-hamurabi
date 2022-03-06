@@ -45,6 +45,7 @@ type technology struct {
 	stela         bool
 	silver        bool
 	ziggurat      bool
+	orchard       bool
 }
 
 func initCityState() *cityState {
