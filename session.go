@@ -21,12 +21,11 @@ func getGameTurns() int {
 	return playerInput("How many turns would you like to play?", 10, math.MaxInt, "", "chose")
 }
 
-func newGameSession() *gameSession {
-	gameTurns := getGameTurns()
+func newGameSession(turns int) *gameSession {
 	state := initCityState()
 
 	return &gameSession{
-		turns:           gameTurns,
+		turns:           turns,
 		state:           *state,
 		avgBushelsAvail: 0,
 		avgPestEaten:    0,

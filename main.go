@@ -12,7 +12,8 @@ func main() {
 func gameLoop() {
 	rand.Seed(time.Now().UnixNano())
 	term := initTerminal()
-	sumer := newGameSession()
+	turns := getGameTurns()
+	sumer := newGameSession(turns)
 
 	orientation()
 	for t := 0; t <= sumer.turns; t++ {
