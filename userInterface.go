@@ -8,9 +8,19 @@ import (
 	"regexp"
 	"runtime"
 	"strconv"
-	"strings"
 	"time"
 )
+
+// anticipating this growing over time
+type terminal struct {
+	p termenv.Profile
+}
+
+func initTerminal() *terminal {
+	return &terminal{
+		p: termenv.EnvColorProfile(),
+	}
+}
 
 func playerInput(prompt string, defChoice int, maxVal int, failMsg string, verb string) int {
 	var res string
@@ -66,11 +76,11 @@ func checkInput(input string, maxVal int) (int, error) {
 	return choice, nil
 }
 
-func (s *gameSession) grainRemaining(res int) {
+func (term *terminal) grainRemaining(bushels int, res int) {
 	if res == 0 {
 		return
 	}
-	fmt.Printf("You have %d bushels of grain remaining.\n", s.state.bushels)
+	fmt.Printf("You have %d bushels of grain remaining.\n", bushels)
 }
 
 func enterToCont() bool {
@@ -121,14 +131,14 @@ func yn(prompt string) bool {
 	}
 }
 
-//
-func (s *gameSession) fOut(str string, clr string, nums ...int) string {
-	ansiFmtStr := make([]string, 0)
-	for _, n := range nums {
-		ansiFmtStr = append(ansiFmtStr, termenv.String(strconv.Itoa(n)).Bold().Foreground(s.p.Color(clr)).String())
-	}
-	for _, f := range ansiFmtStr {
-		str = strings.Replace(str, "%d", f, 1)
-	}
-	return str
+func (term *terminal) colorCode(clr string, n int) string {
+	return termenv.String(strconv.Itoa(n)).Bold().Foreground(term.p.Color(clr)).String()
+}
+
+func (term *terminal) pink(n int) string {
+	return term.colorCode("199", n)
+}
+
+func (term *terminal) red(n int) string {
+	return term.colorCode("196", n)
 }
