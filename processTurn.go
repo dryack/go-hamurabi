@@ -8,24 +8,30 @@ import (
 )
 
 func (s *gameSession) checkForPlague() bool {
-	const plagueMsg = "\nA horrible plague has struck! Many have died!"
-
-	if s.state.year > 0 && rand.Intn(15) == 0 {
-		// TODO: let's do this under printYearResults()
-		fmt.Println(plagueMsg)
-		// TODO: let's do this under doNumbers()
-		s.state.died = s.state.resources.population / (rand.Intn(4) + 2)
-		s.state.resources.cows = s.state.resources.cows / 4
-		s.state.resources.population -= s.state.died
-		s.totalDead += s.state.died
+	chance := 7 + (s.state.resources.population / 5000)
+	// a plague has a 50% chance of continuing each year
+	if s.state.plagueLY {
+		chance = 50 + (s.state.resources.population / 3000)
+	}
+	if s.state.year > 0 && rand.Intn(99)+1 < chance {
 		return true
 	}
 	return false
+
+	// if s.state.year > 0 && rand.Intn(15) == 0 {
+	// 	// TODO: let's do this under printYearResults()
+	//
+	// 	// TODO: let's do this under doNumbers()
+	// 	s.state.died = s.state.resources.population / (rand.Intn(4) + 2)
+	// 	s.state.resources.population -= s.state.died
+	// 	s.totalDead += s.state.died
+	// 	return true
+
 }
 
 func (s *gameSession) printYearResults(term *terminal) {
 	const (
-		heading = "\nMy lord, in the year %s, I beg to report to you that %s people starved, %s were born, and %s " +
+		heading = "\nMy lord, in the year %s, I beg to report to you that %s people starved, our native population %s %s, and %s " +
 			"came to the city.\n"
 		newPopulation        = "Population is now %s.\n"
 		acresAndGranaries    = "The city owns %s acres of land, and has %s granaries.\n"
@@ -54,7 +60,7 @@ func (s *gameSession) printYearResults(term *terminal) {
 		plague, palaceComplete = s.doNumbers(term)
 	}
 
-	fmt.Printf(heading, term.pink(s.state.year), term.pink(s.state.starved), term.pink(s.state.born), term.pink(s.state.migrated))
+	fmt.Printf(heading, term.pink(s.state.year), term.pink(s.state.starved), s.lostOrGained(), term.pink(Abs(s.state.born)), term.pink(s.state.migrated))
 	fmt.Printf(newPopulation, term.pink(s.state.resources.population))
 	fmt.Printf(acresAndGranaries, term.pink(s.state.resources.acres), term.pink(s.state.resources.granary))
 	if palaceComplete {
@@ -73,9 +79,10 @@ func (s *gameSession) printYearResults(term *terminal) {
 		fmt.Println(termenv.String(palaceMsg1).Bold().Background(term.p.Color("226")).Foreground(term.p.Color("16")))
 	}
 
+	// if we're supposed to be building a palace, how many more years are left to build it?
 	if s.state.buildingPalace > -1 {
 		switch {
-		case plague:
+		case plague: // no work is done during a plague year
 			// TODO: colorCode() or new func to support full string coloration
 			fmt.Println(termenv.String(noPalaceWork).Bold().Foreground(term.p.Color("226")))
 			fallthrough
@@ -115,14 +122,59 @@ func (s *gameSession) printYearResults(term *terminal) {
 	s.state.year += 1
 }
 
-func (s *gameSession) doNumbers(term *terminal) (bool, bool) {
-	plague := s.checkForPlague()
-	var palaceComplete bool
-	s.state.forceSlaughtered = 0 // reset this each turn
+func Abs(x int) int {
+	if x < 0 {
+		return -x
+	}
+	return x
+}
 
+func (s *gameSession) doNumbers(term *terminal) (bool, bool) {
+	s.state.forceSlaughtered = 0 // reset this each turn
+	s.state.tradeVal = 17 + rand.Intn(10)
+
+	plague := s.checkForPlague()
+	if !plague {
+		s.state.plagueLY = false // there's no ongoing plague
+	}
+
+	s.doPopulation(plague, term) // starvation & population
+	s.doCows(plague)
+	s.checkForOverthrow(term)
+	s.doMigration(plague)
+	s.doPests()
+	s.doAgriculture(term)
+	palaceComplete := s.doConstruction(plague)
+
+	// trade is reduced during plague
+	if plague {
+		s.state.tradeGoods = s.state.nonFarmer * (rand.Intn(15) + 1)
+	} else {
+		s.state.tradeGoods = s.state.nonFarmer * (rand.Intn(49) + 1)
+	}
+	// 10% of trade is taxed, and converted to silver shekels.  for future consideration, 3600 mina equal a talent
+	// and 1 mina equals 60 shekels
+	if s.state.technology.silver {
+		taxes := s.state.tradeGoods / 10
+		s.state.tradeGoods -= taxes
+		s.state.resources.minaOfSilver += taxes
+	}
+
+	s.state.resources.bushels += s.state.tradeGoods
+	s.totalDead += s.state.starved
+	s.avgPestEaten += s.state.pests
+	s.avgBushelsAvail += s.state.resources.bushels
+	return plague, palaceComplete
+}
+
+func (s *gameSession) doConstruction(plague bool) bool {
+	palaceComplete := false
+
+	// if there's no plague, advance construction of the palace by a year
 	if !plague && s.state.buildingPalace > -1 {
 		s.state.buildingPalace++
 	}
+	// if construction is complete, set the correct palace type and its technologies
 	if s.state.buildingPalace > 4 {
 		switch s.palaceBuilding {
 		case 1:
@@ -136,44 +188,15 @@ func (s *gameSession) doNumbers(term *terminal) (bool, bool) {
 			s.state.structures.palace3 = true
 			s.state.technology.ziggurat = true
 		}
-		palaceComplete = true
+		palaceComplete = true // returned to processTurn()
 		s.state.buildingPalace = -1
-		s.palaceBuilding = -1
+		s.palaceBuilding = -1 // reset palace construction once it's been completed
 	}
-
-	s.state.tradeVal = 17 + rand.Intn(10)
-	s.state.bYield = rand.Intn(9) + 1
-	// cows
-	s.doCows()
-	// starvation & population
-	s.doPopulation(plague)
-	s.checkForOverthrow(term)
-
-	s.state.resources.population += s.state.born
-	s.avgStarved = int(float64(s.state.starved) / float64(s.state.resources.population) * 100)
-	s.state.resources.population -= s.state.starved // children die too
-	// migration
-	s.doMigration(plague)
-	// pests
-	s.doPests()
-	// agricultural results
-	s.doAgriculture(term)
-
-	// trade is reduced during plague
-	if plague {
-		s.state.tradeGoods = s.state.nonFarmer * (rand.Intn(15) + 1)
-	} else {
-		s.state.tradeGoods = s.state.nonFarmer * (rand.Intn(49) + 1)
-	}
-
-	s.state.resources.bushels += s.state.tradeGoods
-	s.totalDead += s.state.starved
-	s.avgPestEaten += s.state.pests
-	s.avgBushelsAvail += s.state.resources.bushels
-	return plague, palaceComplete
+	return palaceComplete
 }
 
 func (s *gameSession) doAgriculture(term *terminal) {
+	s.state.bYield = rand.Intn(9) + 1
 	s.state.resources.bushels += (s.state.planted - s.state.resources.cows*3) * s.state.bYield
 	s.state.resources.bushels -= s.state.pests
 	if s.state.resources.bushels < 0 {
@@ -184,7 +207,7 @@ func (s *gameSession) doAgriculture(term *terminal) {
 	// some lands are tended by the royal staff, and although they can be sold, they CAN'T go to waste
 	royalLands := 500
 	fieldMaintPerPop := 30
-	maxAcresMaint := s.state.resources.population * fieldMaintPerPop
+	maxAcresMaint := s.state.populationLY * fieldMaintPerPop
 	// we don't lose the royal-held lands to wastage from lack of peasants
 	if s.state.resources.acres > royalLands {
 		// if there aren't enough peasants to maintain our acreage
@@ -221,60 +244,52 @@ func (s *gameSession) doMigration(plague bool) {
 	switch {
 	case s.state.resources.cows <= 3:
 		cowMigrantAttraction = 0
-	case s.state.resources.cows > 3 && s.state.resources.population <= 500:
+	case s.state.resources.cows > 3 && s.state.populationLY <= 500:
 		cowMigrantAttraction = s.state.resources.cows * 5
-	case s.state.resources.cows > 3 && s.state.resources.population <= 10000:
+	case s.state.resources.cows > 3 && s.state.populationLY <= 10000:
 		cowMigrantAttraction = s.state.resources.cows * 3
-	case s.state.resources.cows > 3 && s.state.resources.population > 10000:
+	case s.state.resources.cows > 3 && s.state.populationLY > 10000:
 	default:
 		cowMigrantAttraction = 0
 	}
 	if plague {
 		// people don't come to a place with a plague
-		s.state.migrated = (int(0.1*float64(rand.Intn(s.state.resources.population)+1)) + cowMigrantAttraction) / 5
+		s.state.migrated = (int(0.1*float64(rand.Intn(s.state.populationLY)+1)) + cowMigrantAttraction) / 10
 	} else {
-		s.state.migrated = int(0.1*float64(rand.Intn(s.state.resources.population)+1)) + cowMigrantAttraction
+		s.state.migrated = int(0.1*float64(rand.Intn(s.state.populationLY)+1)) + cowMigrantAttraction
 	}
 	s.state.resources.population += s.state.migrated
 }
 
-func (s *gameSession) doPopulation(plague bool) {
-	carryingCapacity := 100000
-	s.state.starved = s.state.resources.population - (s.state.popFed + s.state.resources.cows*s.state.technology.cowMultiplier)
+func (s *gameSession) doPopulation(plague bool, term *terminal) {
+	dead := 0
+	childDeaths := 1
+	if plague {
+		dead, childDeaths = s.doPlague(term)
+	}
+	femalePopulation := s.state.resources.population / 2
+	s.state.populationLY = s.state.resources.population
+
+	s.state.starved = s.state.populationLY - (s.state.popFed + s.state.resources.cows*s.state.technology.cowMultiplier)
 	if s.state.starved < 0 {
 		s.state.starved = 0
 	}
+	s.state.resources.population -= s.state.starved // children die too
 	s.avgStarved = int(float64(s.state.starved) / float64(s.state.resources.population) * 100)
-	switch {
-	case s.state.resources.population < 2000:
-		s.state.born = int(float64(s.state.resources.population) / float64(rand.Intn(8)+2))
-	case s.state.resources.population < carryingCapacity/20:
-		s.state.born = int(float64(s.state.resources.population) / float64(rand.Intn(7)+4))
-	case s.state.resources.population < carryingCapacity/10:
-		s.state.born = int(float64(s.state.resources.population) / float64(rand.Intn(6)+5))
-	case s.state.resources.population < carryingCapacity/5:
-		s.state.born = int(float64(s.state.resources.population) / float64(rand.Intn(6)+6))
-	case s.state.resources.population < carryingCapacity/2:
-		s.state.born = int(float64(s.state.resources.population) / float64(rand.Intn(5)+7))
-	case s.state.resources.population < carryingCapacity-carryingCapacity/3:
-		s.state.born = int(float64(s.state.resources.population) / float64(rand.Intn(5)+8))
-	case s.state.resources.population < carryingCapacity-carryingCapacity/5:
-		s.state.born = int(float64(s.state.resources.population) / float64(rand.Intn(4)+9))
-	case s.state.resources.population < carryingCapacity-carryingCapacity/10:
-		s.state.born = int(float64(s.state.resources.population) / float64(rand.Intn(4)+10))
-	case s.state.resources.population < carryingCapacity-carryingCapacity/20:
-		s.state.born = int(float64(s.state.resources.population) / float64(rand.Intn(3)+11))
-	case s.state.resources.population < carryingCapacity:
-		s.state.born = int(float64(s.state.resources.population) / float64(rand.Intn(2)+12))
-	case s.state.resources.population > carryingCapacity:
-		s.state.born = int(float64(s.state.resources.population) / float64(rand.Intn(2)+14))
-	}
-	if plague {
-		s.state.born /= 2 // children die from the plague as well
-	}
+	// half the population (the females), minus half the dead if there's a plague, have a birth rate between 9% and 95%
+	// which is divided by a randomly determined number (between 2 and 3 if there's a plague).  from this result we
+	// subtract half of the deaths if there's a plague
+	s.state.born = (int(float64(femalePopulation-(dead/2))*math.Max(rand.Float64()-0.05, 0.15)) / childDeaths) - dead/2
+	s.state.resources.population += s.state.born
 }
 
-func (s *gameSession) doCows() {
+func (s *gameSession) doCows(plague bool) {
+	// TODO: implement cowsLY mirroring populationLY, to prevent time travel
+	// if the plague is killing cows, kill em before anything else is considered
+	if plague {
+		s.state.resources.cows = s.state.resources.cows/rand.Intn(5) + 1
+	}
+
 	if s.state.resources.acres < s.state.resources.cows*3 {
 		s.state.forceSlaughtered = 0
 		if s.state.resources.acres <= 2 {
@@ -284,8 +299,8 @@ func (s *gameSession) doCows() {
 		}
 		s.state.resources.cows -= s.state.forceSlaughtered
 	}
-	if s.state.resources.cows*s.state.technology.cowMultiplier > s.state.resources.population {
-		s.state.cowsFed = s.state.resources.population
+	if s.state.resources.cows*s.state.technology.cowMultiplier > s.state.populationLY {
+		s.state.cowsFed = s.state.populationLY
 	} else {
 		s.state.cowsFed = s.state.resources.cows * s.state.technology.cowMultiplier
 	}
@@ -311,7 +326,7 @@ func (s *gameSession) checkForOverthrow(term *terminal) {
 
 	if s.state.starved > int(stability*float64(s.state.resources.population)) {
 		// TODO: colorCode() or new func to support full string coloration
-		fmt.Printf(deposedMsg, term.red(s.state.starved), s.state.resources.population)
+		fmt.Printf(deposedMsg, term.red(s.state.starved), s.state.populationLY)
 		s.totalDead += s.state.starved
 		s.endOfReign()
 	}
@@ -319,7 +334,35 @@ func (s *gameSession) checkForOverthrow(term *terminal) {
 	if s.state.resources.population < 10 {
 		// TODO: colorCode() or new func to support full string coloration
 		fmt.Print(termenv.String(populationDeclined).Bold().Background(term.p.Color("196")))
-		s.state.resources.population = 0
+		s.state.resources.population = 1 // prevents divide by zero
 		s.endOfReign()
 	}
+}
+
+func (s *gameSession) doPlague(term *terminal) (int, int) {
+	plagueMsg := "A horrible plague has struck! Many have died!\n"
+	plagueContinuesMsg := "The terrible plague continues! Our people die in droves!"
+	dead := 0
+	childDeaths := 1
+
+	// TODO: messages moved to printYearResults()
+	if s.state.plagueLY {
+		fmt.Print(termenv.String(plagueContinuesMsg).Bold().Background(term.p.Color("196")))
+	} else {
+		fmt.Print(termenv.String(plagueMsg).Bold().Background(term.p.Color("196")))
+	}
+	dead = s.state.populationLY / (rand.Intn(1) + 2)
+	s.totalDead += dead
+	childDeaths = rand.Intn(1) + 2
+	return dead, childDeaths
+}
+
+func (s *gameSession) lostOrGained() string {
+	switch {
+	case s.state.born < 0:
+		return "decreased by"
+	case s.state.born >= 0:
+		return "increased by"
+	}
+	return ""
 }

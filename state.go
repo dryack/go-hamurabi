@@ -3,6 +3,8 @@ package main
 import "math/rand"
 
 type cityState struct {
+	populationLY     int
+	plagueLY         bool
 	year             int
 	starved          int
 	migrated         int
@@ -25,12 +27,14 @@ type cityState struct {
 }
 
 type stateResources struct {
-	bushels    int
-	acres      int
-	population int
-	granary    int
-	plows      int
-	cows       int
+	bushels      int
+	acres        int
+	population   int
+	granary      int
+	plows        int
+	cows         int
+	orchards     int
+	minaOfSilver int
 }
 
 type stateStructures struct {
@@ -73,19 +77,27 @@ func initCityState() *cityState {
 	}
 
 	res := cityState{
-		year:           0,
-		starved:        0,
-		migrated:       0,
-		bYield:         3,
-		pests:          200,
-		tradeVal:       17 + rand.Intn(10),
-		popFed:         100,
-		planted:        0,
-		died:           0,
-		buildingPalace: -1,
-		resources:      resources,
-		technology:     tech,
-		structures:     structures,
+		populationLY:     100,
+		plagueLY:         false,
+		year:             0,
+		starved:          0,
+		migrated:         0,
+		bYield:           3,
+		pests:            200,
+		tradeVal:         17 + rand.Intn(10),
+		popFed:           100,
+		planted:          0,
+		died:             0,
+		born:             0,
+		nonFarmer:        0,
+		tradeGoods:       0,
+		forceSlaughtered: 0,
+		cowsFed:          0,
+		acresWastage:     0,
+		buildingPalace:   -1,
+		resources:        resources,
+		structures:       structures,
+		technology:       tech,
 	}
 
 	return &res

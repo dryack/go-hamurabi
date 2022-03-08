@@ -5,6 +5,7 @@ import (
 	"github.com/muesli/termenv"
 )
 
+// TODO: i hate this, fix it
 func orientation() {
 	termenv.ClearScreen()
 	fmt.Print("\nOh great Hamurabi, congratulations on your accession to the rule of our beautiful Sumer! I am here" +
@@ -33,14 +34,15 @@ func orientation() {
 		"as we begin to make use of hand plows.\nToo much land untended by peasants is liable to be reclaimed by nature.\n")
 	fmt.Print("Our priests tell us that Enki has delivered unto them the plans for " +
 		"a building that will protect our barley from the rats, but warn construction will be expensive.\nPlows multiply" +
-		"the labor of our adult male peasants, freeing others to trade and craft. This may have significant impact on" +
-		"our income.")
+		" the labor of our adult male peasants, freeing others to trade and craft. This may have significant impact on" +
+		" our income.")
 	if enterToCont() {
 		return
 	}
 	fmt.Print("You must know that starvation; whether caused by cruelty, plague, or pest, will eventually" +
 		" lead to the people rising up and deposing you. \nSometimes it is best to let some starve today, in the hope" +
-		" that the gods and your steady hand will feed us all in the future. And now my lord, you are ready to rule!\n")
+		" that the gods and your steady hand will feed us all in the future. With enough surplus grain,\nyou will be able" +
+		" to build or expand a palace, which brings a number of benefits.\nAnd now my lord, you are ready to rule!\n")
 	if enterToCont() {
 		return
 	}

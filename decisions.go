@@ -56,6 +56,15 @@ func (s *gameSession) agriculture(term *terminal) {
 	s.state.resources.bushels -= res * cowCost
 	term.grainRemaining(s.state.resources.bushels, res)
 
+	if s.state.technology.orchard {
+		orchardCost := 40
+		failMsg = "Think again Hamurabi, you only have " + strconv.Itoa(s.state.resources.acres) + " acres available!"
+		maxOrchards := s.state.resources.acres / orchardCost
+		res = playerInput("How many orchards shall we create, at "+strconv.Itoa(orchardCost)+"acres per orchard?", 0, maxOrchards, failMsg, "converted")
+		s.state.resources.acres -= res * orchardCost
+		s.state.resources.orchards += res
+	}
+
 	// only 1/3rd of the population can benefit from the plows
 	var plowAry = []int{s.state.resources.plows, s.state.resources.population / 3}
 	sort.Ints(plowAry)
